@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -97,13 +99,68 @@ const emptyData: DashboardData = {
   })),
 };
 
+const POLYMARKET_SLUG =
+  "another-state-declare-a-state-of-emergency-over-bird-flu-before-february";
+const METACULUS_QUESTION_ID = 30960;
+const MANIFOLD_SLUG = "will-there-be-more-than-1000-confir";
 export default function Home() {
   const [data, setData] = useState<DashboardData>(emptyData);
   const [mounted, setMounted] = useState(false);
-
+  // const [cdcData, setCdcData] = useState<any>(null);
+  const [polymarketData, setPolymarketData] = useState<any>(null);
+  const [timeseriesData, setTimeseriesData] = useState<any>(null);
+  const [metaculusData, setMetaculusData] = useState<any>(null);
   useEffect(() => {
     setMounted(true);
     setData(generateMockData());
+    fetch(`/api/polymarket?slug=${POLYMARKET_SLUG}`)
+      .then((res) => res.json())
+      .then((data) => setPolymarketData(data))
+      .catch((error) =>
+        console.error("Error fetching Polymarket data:", error)
+      );
+  }, []);
+  const [manifoldData, setManifoldData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!polymarketData) return;
+
+    const tokenIdsString = polymarketData?.clobTokenIds;
+    if (!tokenIdsString) return;
+
+    const tokenIds = JSON.parse(tokenIdsString);
+    if (!tokenIds) return;
+
+    const clobTokenId = tokenIds[0];
+    if (!clobTokenId) return;
+
+    fetch(`/api/polymarket-timeseries?marketId=${clobTokenId}`)
+      .then((res) => res.json())
+      .then((data) => setTimeseriesData(data))
+      .catch((error) =>
+        console.error("Error fetching Polymarket timeseries data:", error)
+      );
+  }, [polymarketData]);
+
+  // useEffect(() => {
+  //   fetch("/api/cdc-data")
+  //     .then((res) => res.json())
+  //     .then((data) => setCdcData(data))
+  //     .catch((error) => console.error("Error fetching CDC data:", error));
+  // }, []);
+
+  useEffect(() => {
+    fetch(`/api/metaculus?questionId=${METACULUS_QUESTION_ID}`)
+      .then((res) => res.json())
+      .then((data) => setMetaculusData(data))
+      .catch((error) => console.error("Error fetching Metaculus data:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/manifold?slug=${MANIFOLD_SLUG}`)
+      .then((res) => res.json())
+      .then((data) => setManifoldData(data))
+      .catch((error) => console.error("Error fetching Manifold data:", error));
   }, []);
 
   if (!mounted) {
@@ -179,6 +236,11 @@ export default function Home() {
         <p>Data is simulated for demonstration purposes</p>
         <p>Last updated: {mounted ? new Date().toLocaleDateString() : ""}</p>
       </footer>
+      {/* <pre>{JSON.stringify(cdcData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(polymarketData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(timeseriesData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(metaculusData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(manifoldData, null, 2)}</pre> */}
     </div>
   );
 }

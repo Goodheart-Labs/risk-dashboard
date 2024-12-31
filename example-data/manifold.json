@@ -1,0 +1,180 @@
+{
+  "id": "0R2uyyOz2L",
+  "creatorId": "b6UJ9jqwTCVMSRJksyLekhJnN673",
+  "creatorUsername": "JZB",
+  "creatorName": "JZB",
+  "createdTime": 1734677386486,
+  "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ALm5wu2fc6Wxpp3rzQ2Ejq71E_roTFxTk4L7bMq-IsQmfg=s96-c",
+  "closeTime": 1767225540000,
+  "question": "Will there be more than 1,000 confirmed human cases of H5N1 bird flu in the US by the end of 2025?",
+  "slug": "will-there-be-more-than-1000-confir",
+  "url": "https://manifold.markets/JZB/will-there-be-more-than-1000-confir",
+  "pool": {
+    "NO": 1481.150610188034,
+    "YES": 675.1507869095436
+  },
+  "probability": 0.6868940548764156,
+  "p": 0.5000000000000007,
+  "totalLiquidity": 1000,
+  "outcomeType": "BINARY",
+  "mechanism": "cpmm-1",
+  "volume": 6563.169595734074,
+  "volume24Hours": 896.33931,
+  "isResolved": false,
+  "uniqueBettorCount": 39,
+  "lastUpdatedTime": 1735673520566,
+  "lastBetTime": 1735669922147,
+  "lastCommentTime": 1735673518561,
+  "marketTier": "plus",
+  "token": "MANA",
+  "description": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "According to the CDC, will there be more than 1,000 confirmed cases of H5N1 Bird Flu in humans in the United States by the end of 2025?",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Background",
+            "type": "text",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "text": " H5N1 bird flu has recently gained attention in the US with 61 confirmed human cases since April 2024. Most cases have been mild and linked to direct exposure to infected animals, particularly dairy cows and poultry. The CDC maintains that the immediate risk to the general public remains low, with no evidence of person-to-person transmission in the United States.",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Resolution Criteria",
+            "type": "text",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "text": " This market will resolve based on official CDC data for confirmed human H5N1 cases in the United States as of December 31, 2025, 11:59 PM ET. The market will resolve YES if the CDC reports more than 1,000 confirmed human cases within this timeframe, and NO otherwise.",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Considerations",
+            "type": "text",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "text": "The current case count represents the first known human infections with H5N1 bird flu linked to dairy cow exposures globally",
+                    "type": "text"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "text": "Most human infections have occurred in people with direct exposure to infected animals",
+                    "type": "text"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "text": "The CDC and state health departments are actively monitoring the situation and conducting surveillance",
+                    "type": "text"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "text": "Historical data shows that human H5N1 infections have been rare, even in countries with widespread animal outbreaks",
+                    "type": "text"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "text": "Changes in virus characteristics, such as increased human-to-human transmission, could significantly impact case numbers",
+                    "type": "text"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "coverImageUrl": "https://storage.googleapis.com/mantic-markets.appspot.com/contract-images/JZB/sE0E8h9dEZ.jpg",
+  "groupSlugs": [
+    "h5n1-bird-flu",
+    "infectious-disease",
+    "pandemic",
+    "public-health"
+  ],
+  "textDescription": "According to the CDC, will there be more than 1,000 confirmed cases of H5N1 Bird Flu in humans in the United States by the end of 2025?\n\nBackground H5N1 bird flu has recently gained attention in the US with 61 confirmed human cases since April 2024. Most cases have been mild and linked to direct exposure to infected animals, particularly dairy cows and poultry. The CDC maintains that the immediate risk to the general public remains low, with no evidence of person-to-person transmission in the United States.\n\nResolution Criteria This market will resolve based on official CDC data for confirmed human H5N1 cases in the United States as of December 31, 2025, 11:59 PM ET. The market will resolve YES if the CDC reports more than 1,000 confirmed human cases within this timeframe, and NO otherwise.\n\nConsiderations\n\nThe current case count represents the first known human infections with H5N1 bird flu linked to dairy cow exposures globally\n\nMost human infections have occurred in people with direct exposure to infected animals\n\nThe CDC and state health departments are actively monitoring the situation and conducting surveillance\n\nHistorical data shows that human H5N1 infections have been rare, even in countries with widespread animal outbreaks\n\nChanges in virus characteristics, such as increased human-to-human transmission, could significantly impact case numbers"
+}
