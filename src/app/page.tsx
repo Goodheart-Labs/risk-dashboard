@@ -100,7 +100,7 @@ const emptyData: DashboardData = {
 const POLYMARKET_SLUG =
   "another-state-declare-a-state-of-emergency-over-bird-flu-before-february";
 const METACULUS_QUESTION_ID = 30960;
-
+const MANIFOLD_SLUG = "will-there-be-more-than-1000-confir";
 export default function Home() {
   const [data, setData] = useState<DashboardData>(emptyData);
   const [mounted, setMounted] = useState(false);
@@ -118,6 +118,7 @@ export default function Home() {
         console.error("Error fetching Polymarket data:", error)
       );
   }, []);
+  const [manifoldData, setManifoldData] = useState<any>(null);
 
   useEffect(() => {
     if (!polymarketData) return;
@@ -151,6 +152,13 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => setMetaculusData(data))
       .catch((error) => console.error("Error fetching Metaculus data:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/manifold?slug=${MANIFOLD_SLUG}`)
+      .then((res) => res.json())
+      .then((data) => setManifoldData(data))
+      .catch((error) => console.error("Error fetching Manifold data:", error));
   }, []);
 
   if (!mounted) {
@@ -229,7 +237,8 @@ export default function Home() {
       {/* <pre>{JSON.stringify(cdcData, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(polymarketData, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(timeseriesData, null, 2)}</pre> */}
-      <pre>{JSON.stringify(metaculusData, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(metaculusData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(manifoldData, null, 2)}</pre> */}
     </div>
   );
 }
