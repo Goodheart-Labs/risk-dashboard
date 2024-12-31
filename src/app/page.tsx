@@ -100,10 +100,15 @@ const emptyData: DashboardData = {
 export default function Home() {
   const [data, setData] = useState<DashboardData>(emptyData);
   const [mounted, setMounted] = useState(false);
+  const [cdcData, setCdcData] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
     setData(generateMockData());
+    fetch("/api/cdc-data")
+      .then((res) => res.json())
+      .then((data) => setCdcData(data))
+      .catch((error) => console.error("Error fetching CDC data:", error));
   }, []);
 
   if (!mounted) {
@@ -179,6 +184,7 @@ export default function Home() {
         <p>Data is simulated for demonstration purposes</p>
         <p>Last updated: {mounted ? new Date().toLocaleDateString() : ""}</p>
       </footer>
+      <pre>{JSON.stringify(cdcData, null, 2)}</pre>
     </div>
   );
 }
