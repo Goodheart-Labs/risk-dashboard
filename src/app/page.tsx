@@ -99,6 +99,7 @@ const emptyData: DashboardData = {
 
 const POLYMARKET_SLUG =
   "another-state-declare-a-state-of-emergency-over-bird-flu-before-february";
+const METACULUS_QUESTION_ID = 30960;
 
 export default function Home() {
   const [data, setData] = useState<DashboardData>(emptyData);
@@ -106,7 +107,7 @@ export default function Home() {
   // const [cdcData, setCdcData] = useState<any>(null);
   const [polymarketData, setPolymarketData] = useState<any>(null);
   const [timeseriesData, setTimeseriesData] = useState<any>(null);
-
+  const [metaculusData, setMetaculusData] = useState<any>(null);
   useEffect(() => {
     setMounted(true);
     setData(generateMockData());
@@ -130,8 +131,6 @@ export default function Home() {
     const clobTokenId = tokenIds[0];
     if (!clobTokenId) return;
 
-    console.log("Fetching timeseries data for marketId:", clobTokenId);
-
     fetch(`/api/polymarket-timeseries?marketId=${clobTokenId}`)
       .then((res) => res.json())
       .then((data) => setTimeseriesData(data))
@@ -146,6 +145,13 @@ export default function Home() {
   //     .then((data) => setCdcData(data))
   //     .catch((error) => console.error("Error fetching CDC data:", error));
   // }, []);
+
+  useEffect(() => {
+    fetch(`/api/metaculus?questionId=${METACULUS_QUESTION_ID}`)
+      .then((res) => res.json())
+      .then((data) => setMetaculusData(data))
+      .catch((error) => console.error("Error fetching Metaculus data:", error));
+  }, []);
 
   if (!mounted) {
     return null; // or a loading skeleton
@@ -223,6 +229,7 @@ export default function Home() {
       {/* <pre>{JSON.stringify(cdcData, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(polymarketData, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(timeseriesData, null, 2)}</pre> */}
+      <pre>{JSON.stringify(metaculusData, null, 2)}</pre>
     </div>
   );
 }

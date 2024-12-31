@@ -11,6 +11,7 @@ export async function GET() {
     // Launch browser
     browser = await launchChromium({
       chromiumSandbox: false, // Required for some serverless environments
+      headless: true, // Ensure headless mode is enabled
     });
     const context = await browser.newContext();
     const page = await context.newPage();

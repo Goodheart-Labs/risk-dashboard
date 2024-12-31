@@ -1,2 +1,2 @@
-- Get timeseries data for polymarket
-- Fetch metaculus market: https://www.metaculus.com/questions/30960/10000-h5-avian-influenza-cases-in-us-end-of-2025/
+- ~~Get timeseries data for polymarket~~
+- ~~Fetch metaculus market: https://www.metaculus.com/questions/30960/10000-h5-avian-influenza-cases-in-us-end-of-2025/~~
