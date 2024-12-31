@@ -97,18 +97,28 @@ const emptyData: DashboardData = {
   })),
 };
 
+const POLYMARKET_SLUG =
+  "another-state-declare-a-state-of-emergency-over-bird-flu-before-february";
+
 export default function Home() {
   const [data, setData] = useState<DashboardData>(emptyData);
   const [mounted, setMounted] = useState(false);
   const [cdcData, setCdcData] = useState<any>(null);
+  const [polymarketData, setPolymarketData] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
     setData(generateMockData());
-    fetch("/api/cdc-data")
+    // fetch("/api/cdc-data")
+    //   .then((res) => res.json())
+    //   .then((data) => setCdcData(data))
+    //   .catch((error) => console.error("Error fetching CDC data:", error));
+    fetch(`/api/polymarket?slug=${POLYMARKET_SLUG}`)
       .then((res) => res.json())
-      .then((data) => setCdcData(data))
-      .catch((error) => console.error("Error fetching CDC data:", error));
+      .then((data) => setPolymarketData(data))
+      .catch((error) =>
+        console.error("Error fetching Polymarket data:", error)
+      );
   }, []);
 
   if (!mounted) {
@@ -184,7 +194,8 @@ export default function Home() {
         <p>Data is simulated for demonstration purposes</p>
         <p>Last updated: {mounted ? new Date().toLocaleDateString() : ""}</p>
       </footer>
-      <pre>{JSON.stringify(cdcData, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(cdcData, null, 2)}</pre> */}
+      <pre>{JSON.stringify(polymarketData, null, 2)}</pre>
     </div>
   );
 }
