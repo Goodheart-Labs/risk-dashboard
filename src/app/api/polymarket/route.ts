@@ -9,8 +9,11 @@ export async function GET(request: Request) {
     const slug = searchParams.get("slug");
 
     if (!slug) {
+      console.error("NO SLUG PROVIDED TO POLYMARKET API");
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
+
+    console.error(`FETCHING POLYMARKET DATA FOR SLUG: ${slug}`);
 
     // First fetch the event
     const eventResponse = await fetch(`${GAMMA_API}/events?slug=${slug}`, {

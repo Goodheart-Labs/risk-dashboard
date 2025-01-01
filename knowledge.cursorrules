@@ -1,0 +1,48 @@
+# Package Version Rules
+- next@15.1.3 is intentionally set
+- eslint@9 is intentionally set
+- @types/node@22.10.1 is intentionally set
+- eslint-config-next@15.1.3 is intentionally set
+- @eslint/eslintrc@3 is intentionally set
+
+# Do not auto-update or suggest updates for these packages
+ignore-version-updates:
+  - next
+  - eslint
+  - @types/node
+  - eslint-config-next
+  - @eslint/eslintrc
+
+# Risk Index Calculation Rules
+- Current formula: (Polymarket * 0.1 + Metaculus) / 2
+- DO NOT CHANGE THIS FORMULA without explicit approval
+- This weighting is because the markets are different and the polymarket resolving yes is still only 10% that bird flu is a disaster. 
+- Any changes must be discussed and validated first
+
+# Data Source Requirements
+Primary data sources (in order of priority):
+1. Polymarket prediction markets
+2. Metaculus predictions
+3. Sentinel (manual data input)
+4. Manifold (backup if unable to get Polymarket or Metaculus)
+5. CDC data (under consideration)
+
+# Implementation Notes
+- Main graph will show weighted combination of all available sources
+- Secondary graphs will show individual data sources
+- Need to handle different time periods and data overlaps
+- Consider ignoring data before overlap periods if overlap is substantial
+- Otherwise, use reduced number of sources for earlier periods
+
+# Database Requirements
+- Store historical data points
+- Track daily/hourly values from each source
+- Store metadata about sources
+- Manage weights for combining sources
+- Handle missing data and different time periods
+
+# Development Plan
+1. Implement data fetchers for each source
+2. Set up database structure
+3. Create data combination logic
+4. Update visualization components 

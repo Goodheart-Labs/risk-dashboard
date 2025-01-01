@@ -1,171 +1,68 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { ChartDataPoint, MockDataSeries } from "../lib/risk-index/types";
+import {
+  fetchPolymarketData,
+  fetchMetaculusData,
+  generateMockData,
+  emptyData,
+} from "../lib/services";
+import { PREDICTION_MARKETS } from "../lib/config";
+import { LineGraph } from "../components/LineGraph";
+import { combineDataSources } from "../lib/risk-index/combine";
 
-// Types for our data
-type TimeSeriesData = {
-  date: string;
-  value: number;
-};
-
-type DashboardData = {
-  cases: TimeSeriesData[];
-  mortality: TimeSeriesData[];
-  spread: TimeSeriesData[];
-  mutations: TimeSeriesData[];
-};
-
-// Helper component for line graphs
-const LineGraph = ({
-  data,
-  color,
-  label,
-}: {
-  data: TimeSeriesData[];
-  color: string;
-  label: string;
-}) => {
-  const maxValue = Math.max(...data.map((d) => d.value));
-  const points = data
-    .map((d, i) => {
-      const x = (i / (data.length - 1)) * 100;
-      const y = 100 - (d.value / maxValue) * 90;
-      return `${x},${y}`;
-    })
-    .join(" ");
-
-  return (
-    <div className="relative h-64 w-full">
-      <div className="absolute top-0 left-0 text-sm text-gray-500">{label}</div>
-      <svg
-        className="w-full h-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        <polyline
-          points={points}
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-      <div className="absolute bottom-0 right-0 text-sm text-gray-500">
-        Latest: {data[data.length - 1].value}
-      </div>
-    </div>
-  );
-};
-
-// Generate mock data with fixed values
-const generateMockData = (): DashboardData => ({
-  cases: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 100 + i * 50,
-  })),
-  mortality: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 20 + i * 2,
-  })),
-  spread: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 10 + i,
-  })),
-  mutations: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 5 + Math.floor(i / 2),
-  })),
-});
-
-// Initial empty state
-const emptyData: DashboardData = {
-  cases: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 0,
-  })),
-  mortality: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 0,
-  })),
-  spread: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 0,
-  })),
-  mutations: Array.from({ length: 12 }, (_, i) => ({
-    date: `2023-${i + 1}`,
-    value: 0,
-  })),
-};
-
-const POLYMARKET_SLUG =
-  "another-state-declare-a-state-of-emergency-over-bird-flu-before-february";
-const METACULUS_QUESTION_ID = 30960;
-const MANIFOLD_SLUG = "will-there-be-more-than-1000-confir";
 export default function Home() {
-  const [data, setData] = useState<DashboardData>(emptyData);
+  const [data, setData] = useState<MockDataSeries>(emptyData);
   const [mounted, setMounted] = useState(false);
-  // const [cdcData, setCdcData] = useState<any>(null);
-  const [polymarketData, setPolymarketData] = useState<any>(null);
-  const [timeseriesData, setTimeseriesData] = useState<any>(null);
-  const [metaculusData, setMetaculusData] = useState<any>(null);
+  const [polymarketTimeSeries, setPolymarketTimeSeries] = useState<
+    ChartDataPoint[]
+  >([]);
+  const [metaculusTimeSeries, setMetaculusTimeSeries] = useState<
+    ChartDataPoint[]
+  >([]);
+
   useEffect(() => {
     setMounted(true);
-    setData(generateMockData());
-    fetch(`/api/polymarket?slug=${POLYMARKET_SLUG}`)
-      .then((res) => res.json())
-      .then((data) => setPolymarketData(data))
-      .catch((error) =>
-        console.error("Error fetching Polymarket data:", error)
-      );
-  }, []);
-  const [manifoldData, setManifoldData] = useState<any>(null);
 
-  useEffect(() => {
-    if (!polymarketData) return;
+    // Load data from services
+    fetchPolymarketData(PREDICTION_MARKETS.POLYMARKET.SLUG)
+      .then((data) => {
+        setPolymarketTimeSeries(data);
+      })
+      .catch((error) => {
+        console.error("Error loading Polymarket data:", error);
+      });
 
-    const tokenIdsString = polymarketData?.clobTokenIds;
-    if (!tokenIdsString) return;
+    fetchMetaculusData(PREDICTION_MARKETS.METACULUS.QUESTION_ID)
+      .then((data) => {
+        setMetaculusTimeSeries(data);
+      })
+      .catch((error) => {
+        console.error("Error loading Metaculus data:", error);
+      });
 
-    const tokenIds = JSON.parse(tokenIdsString);
-    if (!tokenIds) return;
-
-    const clobTokenId = tokenIds[0];
-    if (!clobTokenId) return;
-
-    fetch(`/api/polymarket-timeseries?marketId=${clobTokenId}`)
-      .then((res) => res.json())
-      .then((data) => setTimeseriesData(data))
-      .catch((error) =>
-        console.error("Error fetching Polymarket timeseries data:", error)
-      );
-  }, [polymarketData]);
-
-  // useEffect(() => {
-  //   fetch("/api/cdc-data")
-  //     .then((res) => res.json())
-  //     .then((data) => setCdcData(data))
-  //     .catch((error) => console.error("Error fetching CDC data:", error));
-  // }, []);
-
-  useEffect(() => {
-    fetch(`/api/metaculus?questionId=${METACULUS_QUESTION_ID}`)
-      .then((res) => res.json())
-      .then((data) => setMetaculusData(data))
-      .catch((error) => console.error("Error fetching Metaculus data:", error));
+    // Set initial mock data for other charts
+    setData({
+      ...emptyData,
+      riskIndex: generateMockData().riskIndex,
+      variantCount: generateMockData().variantCount,
+    });
   }, []);
 
-  useEffect(() => {
-    fetch(`/api/manifold?slug=${MANIFOLD_SLUG}`)
-      .then((res) => res.json())
-      .then((data) => setManifoldData(data))
-      .catch((error) => console.error("Error fetching Manifold data:", error));
-  }, []);
+  // Calculate combined risk index when either data source updates
+  const riskIndex = useMemo(() => {
+    // Only use mock data if we have no real data from either source
+    if (polymarketTimeSeries.length === 0 && metaculusTimeSeries.length === 0) {
+      console.log("No real data available, using mock risk index");
+      return data.riskIndex;
+    }
 
-  if (!mounted) {
-    return null; // or a loading skeleton
-  }
+    // Otherwise combine the real data we have
+    return combineDataSources(polymarketTimeSeries, metaculusTimeSeries);
+  }, [polymarketTimeSeries, metaculusTimeSeries, data.riskIndex]);
+
+  if (!mounted) return null;
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] min-h-screen bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
@@ -189,9 +86,10 @@ export default function Home() {
             H5N1 Risk Index
           </h2>
           <LineGraph
-            data={data.cases}
+            data={riskIndex}
             color="#ef4444"
-            label="Cases over time"
+            label="Risk index value"
+            formatValue={(v) => `${v.toFixed(1)}%`}
           />
         </div>
 
@@ -203,9 +101,10 @@ export default function Home() {
               February?
             </h2>
             <LineGraph
-              data={data.mortality}
+              data={polymarketTimeSeries}
               color="#3b82f6"
-              label="Deaths per 100 cases"
+              label="Polymarket Prediction (%)"
+              formatValue={(v) => `${v.toFixed(1)}%`}
             />
           </div>
 
@@ -215,18 +114,22 @@ export default function Home() {
               United States before January 1, 2026?
             </h2>
             <LineGraph
-              data={data.spread}
+              data={metaculusTimeSeries}
               color="#10b981"
-              label="Countries affected"
+              label="Metaculus Prediction (%)"
+              formatValue={(v) => `${v.toFixed(1)}%`}
             />
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-4">Some CDC</h2>
+            <h2 className="text-xl font-bold text-black mb-4">
+              Detected H5N1 Variants
+            </h2>
             <LineGraph
-              data={data.mutations}
+              data={data.variantCount}
               color="#8b5cf6"
-              label="New variants detected"
+              label="Number of variants"
+              formatValue={(v) => v.toString()}
             />
           </div>
         </div>
@@ -284,11 +187,6 @@ export default function Home() {
         <p>Data is simulated for demonstration purposes</p>
         <p>Last updated: {mounted ? new Date().toLocaleDateString() : ""}</p>
       </footer>
-      {/* <pre>{JSON.stringify(cdcData, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(polymarketData, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(timeseriesData, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(metaculusData, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(manifoldData, null, 2)}</pre> */}
     </div>
   );
 }
