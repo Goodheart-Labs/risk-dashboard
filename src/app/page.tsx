@@ -11,11 +11,9 @@ import {
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
 import { combineDataSources } from "../lib/risk-index/combine";
-import { getProbabilityWord } from "@/lib/probabilities";
-import { getProbabilityColor } from "@/lib/probabilities";
+import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 
 export default function Home() {
-  const [data, setData] = useState<MockDataSeries>(emptyData);
   const [mounted, setMounted] = useState(false);
   const [polymarketTimeSeries, setPolymarketTimeSeries] = useState<
     ChartDataPoint[]
@@ -43,13 +41,6 @@ export default function Home() {
       .catch((error) => {
         console.error("Error loading Metaculus data:", error);
       });
-
-    // Set initial mock data for other charts
-    setData({
-      ...emptyData,
-      riskIndex: generateMockData().riskIndex,
-      variantCount: generateMockData().variantCount,
-    });
   }, []);
 
   // Calculate combined risk index when either data source updates
@@ -57,18 +48,17 @@ export default function Home() {
     // Only use mock data if we have no real data from either source
     if (polymarketTimeSeries.length === 0 && metaculusTimeSeries.length === 0) {
       console.log("No real data available, using mock risk index");
-      return data.riskIndex;
+      return [];
     }
 
     // Otherwise combine the real data we have
     return combineDataSources(polymarketTimeSeries, metaculusTimeSeries);
-  }, [polymarketTimeSeries, metaculusTimeSeries, data.riskIndex]);
+  }, [polymarketTimeSeries, metaculusTimeSeries]);
 
   if (!mounted) return null;
 
   return (
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
-      {/* Header */}
       <header className="mx-auto mb-8 w-full max-w-6xl text-center">
         <h1 className="mb-4 text-4xl font-bold text-black md:text-6xl">
           Will H5N1 be a disaster?
@@ -99,7 +89,6 @@ export default function Home() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl space-y-6">
-        {/* Main Graph */}
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-2xl font-bold text-black">
             H5N1 Risk Index
@@ -137,18 +126,6 @@ export default function Home() {
               color="#10b981"
               label="Metaculus Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
-            />
-          </div>
-
-          <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-bold text-black">
-              Detected H5N1 Variants
-            </h2>
-            <LineGraph
-              data={data.variantCount}
-              color="#8b5cf6"
-              label="Number of variants"
-              formatValue={(v) => v.toString()}
             />
           </div>
         </div>
@@ -203,7 +180,7 @@ export default function Home() {
             </a>
           </p>
         </div>
-        <p>Data is simulated for demonstration purposes</p>
+        {/* <p>Data is simulated for demonstration purposes</p> */}
         <p>Last updated: {mounted ? new Date().toLocaleDateString() : ""}</p>
       </footer>
     </div>
