@@ -1,11 +1,22 @@
 import crypto from "crypto";
 import { config } from "./config";
 
-export async function kalshiFetch(path: string, init: RequestInit = {}) {
-  const timestamp = Date.now().toString();
-  const method = init.method || "GET";
+export async function kalshiFetch(
+  path: string,
+  init: RequestInit & { query?: Record<string, string | number> } = {},
+) {
+  const { query, ...restInit } = init;
+  const queryString = query
+    ? "?" +
+      new URLSearchParams(
+        Object.entries(query).map(([k, v]) => [k, v.toString()]),
+      )
+    : "";
 
-  const message = Buffer.from(timestamp + method + path, "utf-8");
+  const timestamp = Date.now().toString();
+  const method = restInit.method || "GET";
+
+  const message = Buffer.from(timestamp + method + path + queryString, "utf-8");
   const key = crypto.createPrivateKey(config.privateKey);
 
   const signature = crypto
@@ -24,12 +35,17 @@ export async function kalshiFetch(path: string, init: RequestInit = {}) {
     ...init.headers,
   };
 
-  const url = config.baseUrl + path;
+  let baseUrl: string = config.baseUrl;
+  if (path.includes("candlesticks")) {
+    baseUrl = "https://api.elections.kalshi.com/v1";
+  }
+
+  const url = baseUrl + path + queryString;
   console.log("Fetching URL:", url);
   console.log("Headers:", headers);
 
   const response = await fetch(url, {
-    ...init,
+    ...restInit,
     headers,
   });
 
