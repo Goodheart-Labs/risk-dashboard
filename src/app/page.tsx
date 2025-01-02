@@ -1,13 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { ChartDataPoint, MockDataSeries } from "../lib/risk-index/types";
-import {
-  fetchPolymarketData,
-  fetchMetaculusData,
-  generateMockData,
-  emptyData,
-} from "../lib/services";
+import { ChartDataPoint } from "../lib/risk-index/types";
+import { fetchPolymarketData, fetchMetaculusData } from "../lib/services";
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
 import { combineDataSources } from "../lib/risk-index/combine";
