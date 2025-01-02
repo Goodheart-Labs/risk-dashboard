@@ -24,13 +24,6 @@ export async function GET(request: Request) {
       },
     );
 
-    // Add debugging for response status and details
-    console.log("Response status:", timeseriesResponse.status);
-    console.log(
-      "Response headers:",
-      Object.fromEntries(timeseriesResponse.headers.entries()),
-    );
-
     if (!timeseriesResponse.ok) {
       const errorText = await timeseriesResponse.text();
       console.error("Error response body:", errorText);

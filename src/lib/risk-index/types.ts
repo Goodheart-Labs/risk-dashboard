@@ -29,3 +29,58 @@ export type MockDataSeries = {
   riskIndex: ChartDataPoint[];
   variantCount: ChartDataPoint[];
 };
+
+export type KalshiMarketData = {
+  market: {
+    ticker: string;
+    title: string;
+    open_time: string;
+    close_time: string;
+    status: string;
+    yes_bid: number;
+    yes_ask: number;
+    no_bid: number;
+    no_ask: number;
+    last_price: number;
+    volume: number;
+    volume_24h: number;
+  };
+};
+
+export type KalshiCandlestick = {
+  end_period_ts: number;
+  yes_bid: {
+    open: number;
+    low: number;
+    high: number;
+    close: number;
+  };
+  yes_ask: {
+    open: number;
+    low: number;
+    high: number;
+    close: number;
+  };
+  price: {
+    open: number | null;
+    low: number | null;
+    high: number | null;
+    close: number | null;
+    mean: number | null;
+    mean_centi: number | null;
+    previous: number | null;
+  };
+  volume: number;
+  open_interest: number;
+};
+
+export type KalshiResponse = {
+  marketData: KalshiMarketData;
+  candlesticks: {
+    candlesticks: KalshiCandlestick[];
+  };
+  dateRange: {
+    start: string; // ISO string
+    end: string; // ISO string
+  };
+};

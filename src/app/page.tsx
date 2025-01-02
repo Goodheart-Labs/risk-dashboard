@@ -2,11 +2,16 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { ChartDataPoint } from "../lib/risk-index/types";
-import { fetchPolymarketData, fetchMetaculusData } from "../lib/services";
+import {
+  fetchPolymarketData,
+  fetchMetaculusData,
+  fetchKalshiData,
+} from "../lib/services";
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
 import { combineDataSources } from "../lib/risk-index/combine";
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
+import { format } from "date-fns";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -16,25 +21,30 @@ export default function Home() {
   const [metaculusTimeSeries, setMetaculusTimeSeries] = useState<
     ChartDataPoint[]
   >([]);
+  const [kalshiTimeSeries, setKalshiTimeSeries] = useState<ChartDataPoint[]>(
+    [],
+  );
 
   useEffect(() => {
     setMounted(true);
 
     // Load data from services
     fetchPolymarketData(PREDICTION_MARKETS.POLYMARKET.SLUG)
-      .then((data) => {
-        setPolymarketTimeSeries(data);
-      })
+      .then(setPolymarketTimeSeries)
       .catch((error) => {
         console.error("Error loading Polymarket data:", error);
       });
 
     fetchMetaculusData(PREDICTION_MARKETS.METACULUS.QUESTION_ID)
-      .then((data) => {
-        setMetaculusTimeSeries(data);
-      })
+      .then(setMetaculusTimeSeries)
       .catch((error) => {
         console.error("Error loading Metaculus data:", error);
+      });
+
+    fetchKalshiData()
+      .then(setKalshiTimeSeries)
+      .catch((error) => {
+        console.error("Error loading Kalshi data:", error);
       });
   }, []);
 
@@ -50,14 +60,12 @@ export default function Home() {
     return combineDataSources(polymarketTimeSeries, metaculusTimeSeries);
   }, [polymarketTimeSeries, metaculusTimeSeries]);
 
-  console.log(riskIndex);
-
   if (!mounted) return null;
 
   return (
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
       <header className="mx-auto mb-8 w-full max-w-6xl text-center">
-        <h1 className="mb-4 text-4xl font-bold text-black md:text-6xl">
+        <h1 className="my-4 text-4xl font-bold text-black md:text-6xl">
           Will H5N1 be a disaster?
         </h1>
         <p className="mb-4 text-2xl text-gray-700">
@@ -101,7 +109,7 @@ export default function Home() {
         {/* Grid of smaller graphs */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-bold text-black">
+            <h2 className="mb-4 text-pretty text-xl font-semibold tracking-tight">
               Another state declare a state of emergency over bird flu before
               February?
             </h2>
@@ -114,7 +122,7 @@ export default function Home() {
           </div>
 
           <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-bold text-black">
+            <h2 className="mb-4 text-pretty text-xl font-semibold tracking-tight">
               Will CDC report 10,000 or more H5 avian influenza cases in the
               United States before January 1, 2026?
             </h2>
@@ -123,6 +131,22 @@ export default function Home() {
               color="#10b981"
               label="Metaculus Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
+            />
+          </div>
+
+          <div className="col-span-full rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-bold text-black">
+              Will the CDC recommend delaying non-essential travel due to H5
+              bird flu before 2026?
+            </h2>
+            <LineGraph
+              data={kalshiTimeSeries}
+              color="#8b5cf6"
+              label="Kalshi Prediction (%)"
+              formatValue={(v) => `${v.toFixed(1)}%`}
+              tooltipLabelFormatter={(date) =>
+                format(new Date(date), "MM/dd ha")
+              }
             />
           </div>
         </div>

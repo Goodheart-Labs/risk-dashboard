@@ -1,3 +1,3 @@
-export * from "./polymarket";
-export * from "./metaculus";
-export * from "./mock";
+export { fetchPolymarketData } from "./polymarket";
+export { fetchMetaculusData } from "./metaculus";
+export { fetchKalshiData } from "./kalshi";

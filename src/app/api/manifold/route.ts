@@ -19,13 +19,6 @@ export async function GET(request: Request) {
       },
     });
 
-    // Add debugging for response status and details
-    console.log("Response status:", marketResponse.status);
-    console.log(
-      "Response headers:",
-      Object.fromEntries(marketResponse.headers.entries()),
-    );
-
     if (!marketResponse.ok) {
       const errorText = await marketResponse.text();
       console.error("Error response body:", errorText);
