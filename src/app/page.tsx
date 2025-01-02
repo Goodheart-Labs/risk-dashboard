@@ -11,6 +11,8 @@ import {
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
 import { combineDataSources } from "../lib/risk-index/combine";
+import { getProbabilityWord } from "@/lib/probabilities";
+import { getProbabilityColor } from "@/lib/probabilities";
 
 export default function Home() {
   const [data, setData] = useState<MockDataSeries>(emptyData);
@@ -72,7 +74,24 @@ export default function Home() {
           Will H5N1 be a disaster?
         </h1>
         <p className="mb-4 text-2xl text-gray-700">
-          [Probably not] - our risk index gives it [5 out of 100 (about 5%)]
+          {riskIndex.length > 0 ? (
+            <>
+              <span
+                className={getProbabilityColor(
+                  riskIndex[riskIndex.length - 1].value / 100,
+                )}
+              >
+                {getProbabilityWord(
+                  riskIndex[riskIndex.length - 1].value / 100,
+                )}
+              </span>{" "}
+              - our risk index gives it{" "}
+              {riskIndex[riskIndex.length - 1].value.toFixed(1)} out of 100
+              (about {riskIndex[riskIndex.length - 1].value.toFixed(1)}%)
+            </>
+          ) : (
+            "Loading risk assessment..."
+          )}
         </p>
         <p className="text-xl text-gray-600">
           Real-time monitoring of avian flu data sources
