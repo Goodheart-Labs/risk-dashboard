@@ -41,6 +41,7 @@ export function LineGraph({
             dataKey="date"
             tick={{
               fontSize: 12,
+              // @ts-expect-error recharts types are wrong
               angle: -45,
               textAnchor: "end",
               dy: 5,
