@@ -21,8 +21,8 @@ interface LineGraphProps {
   formatValue?: (value: number) => string;
   tickFormatter?: (date: string) => string;
   tooltipFormatter?: Formatter<number, string>;
-
   tooltipLabelFormatter?: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     label: any,
     payload: Payload<number, string>[],
   ) => React.ReactNode;
