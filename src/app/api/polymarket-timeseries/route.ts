@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     if (!marketId) {
       return NextResponse.json(
         { error: "Market ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -21,14 +21,14 @@ export async function GET(request: Request) {
         headers: {
           Accept: "application/json",
         },
-      }
+      },
     );
 
     // Add debugging for response status and details
     console.log("Response status:", timeseriesResponse.status);
     console.log(
       "Response headers:",
-      Object.fromEntries(timeseriesResponse.headers.entries())
+      Object.fromEntries(timeseriesResponse.headers.entries()),
     );
 
     if (!timeseriesResponse.ok) {
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
           status: timeseriesResponse.status,
           details: errorText,
         },
-        { status: timeseriesResponse.status }
+        { status: timeseriesResponse.status },
       );
     }
 
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
     console.error("Error fetching timeseries data:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

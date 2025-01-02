@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     if (!slug) {
       return Response.json(
         { error: "Market slug is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     console.log("Response status:", marketResponse.status);
     console.log(
       "Response headers:",
-      Object.fromEntries(marketResponse.headers.entries())
+      Object.fromEntries(marketResponse.headers.entries()),
     );
 
     if (!marketResponse.ok) {
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
           status: marketResponse.status,
           details: errorText,
         },
-        { status: marketResponse.status }
+        { status: marketResponse.status },
       );
     }
 

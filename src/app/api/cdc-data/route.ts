@@ -19,7 +19,7 @@ export async function GET() {
     // Navigate to the CDC page
     await page.goto(
       "https://www.cdc.gov/bird-flu/php/avian-flu-summary/chart-epi-curve-ah5n1.html",
-      { waitUntil: "domcontentloaded" }
+      { waitUntil: "domcontentloaded" },
     );
 
     // Wait for the download link to be available
@@ -28,7 +28,7 @@ export async function GET() {
     // Get the blob URL
     const csvData = await page.evaluate(async () => {
       const link = document.querySelector(
-        '.download-links a[download="data-table.csv"]'
+        '.download-links a[download="data-table.csv"]',
       );
       const blobUrl = link?.getAttribute("href");
       if (!blobUrl) throw new Error("Could not find download link");
@@ -57,7 +57,7 @@ export async function GET() {
     console.error("Error fetching CDC data:", error);
     return NextResponse.json(
       { error: "Failed to fetch CDC data" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     if (browser) {
