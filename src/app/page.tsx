@@ -50,7 +50,18 @@ export default function Home() {
     return combineDataSources(polymarketTimeSeries, metaculusTimeSeries);
   }, [polymarketTimeSeries, metaculusTimeSeries]);
 
-  console.log(riskIndex);
+  useEffect(() => {
+    fetch("/api/kalshi")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching Kalshi data:", error);
+      });
+  }, []);
 
   if (!mounted) return null;
 

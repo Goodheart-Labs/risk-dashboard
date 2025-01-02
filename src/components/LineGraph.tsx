@@ -64,6 +64,7 @@ export function LineGraph({
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 8 }}
+            isAnimationActive={false}
           />
         </LineChart>
       </ResponsiveContainer>
