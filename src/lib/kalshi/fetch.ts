@@ -41,8 +41,6 @@ export async function kalshiFetch(
   }
 
   const url = baseUrl + path + queryString;
-  console.log("Fetching URL:", url);
-  console.log("Headers:", headers);
 
   const response = await fetch(url, {
     ...restInit,

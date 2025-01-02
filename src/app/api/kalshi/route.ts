@@ -8,7 +8,6 @@ const MARKET_ID = "d02240fe-5c63-4378-885f-97657e90b783";
 export async function GET() {
   try {
     const marketData = await kalshiFetch(`/markets/${MARKET_TICKER}`);
-    console.log(marketData);
 
     const openTime = new Date(marketData.market.open_time);
     const now = new Date();
@@ -21,8 +20,6 @@ export async function GET() {
 
     const start_ts = Math.floor(oneMonthAgo.getTime() / 1000);
     const end_ts = Math.floor(now.getTime() / 1000);
-
-    console.log(start_ts, end_ts);
 
     const candlesticks = await kalshiFetch(
       `/series/${SERIES_TICKER}/markets/${MARKET_ID}/candlesticks`,

@@ -1,9 +1,4 @@
-import { format } from "date-fns";
-import {
-  KalshiResponse,
-  ChartDataPoint,
-  KalshiCandlestick,
-} from "../risk-index/types";
+import { KalshiResponse, ChartDataPoint } from "../risk-index/types";
 
 export async function fetchKalshiData(): Promise<ChartDataPoint[]> {
   const data = await fetchFromAPI();
@@ -20,8 +15,6 @@ function transformKalshiData(data: KalshiResponse): ChartDataPoint[] {
   if (!data?.candlesticks?.candlesticks) {
     return [];
   }
-
-  console.log(data.candlesticks.candlesticks);
 
   // get the first date
   const firstDate = data.candlesticks.candlesticks[0].end_period_ts;
