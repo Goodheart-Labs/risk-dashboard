@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     if (!events?.[0]) {
       return NextResponse.json(
         { error: "No events found for this slug" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     if (!event.markets?.[0]) {
       return NextResponse.json(
         { error: "No markets found for this event" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     console.error("Error fetching from Polymarket:", error);
     return NextResponse.json(
       { error: "Failed to fetch market data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

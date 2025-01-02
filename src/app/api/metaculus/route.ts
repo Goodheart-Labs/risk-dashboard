@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     if (!questionId) {
       return Response.json(
         { error: "Question ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -19,14 +19,14 @@ export async function GET(request: Request) {
         headers: {
           Accept: "application/json",
         },
-      }
+      },
     );
 
     // Add debugging for response status and details
     console.log("Response status:", questionResponse.status);
     console.log(
       "Response headers:",
-      Object.fromEntries(questionResponse.headers.entries())
+      Object.fromEntries(questionResponse.headers.entries()),
     );
 
     if (!questionResponse.ok) {
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
           status: questionResponse.status,
           details: errorText,
         },
-        { status: questionResponse.status }
+        { status: questionResponse.status },
       );
     }
 

@@ -28,4 +28,4 @@ export type MetaculusResponse = {
 export type MockDataSeries = {
   riskIndex: ChartDataPoint[];
   variantCount: ChartDataPoint[];
-}; 
+};

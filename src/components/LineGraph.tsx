@@ -24,7 +24,7 @@ export function LineGraph({
 }: LineGraphProps) {
   return (
     <div className="relative h-64 w-full">
-      <div className="absolute top-0 left-0 text-sm text-gray-500">{label}</div>
+      <div className="absolute left-0 top-0 text-sm text-gray-500">{label}</div>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}

@@ -65,13 +65,13 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] min-h-screen bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
       {/* Header */}
-      <header className="mb-8 text-center max-w-6xl mx-auto w-full">
-        <h1 className="text-4xl md:text-6xl font-bold text-black mb-4">
+      <header className="mx-auto mb-8 w-full max-w-6xl text-center">
+        <h1 className="mb-4 text-4xl font-bold text-black md:text-6xl">
           Will H5N1 be a disaster?
         </h1>
-        <p className="text-2xl text-gray-700 mb-4">
+        <p className="mb-4 text-2xl text-gray-700">
           [Probably not] - our risk index gives it [5 out of 100 (about 5%)]
         </p>
         <p className="text-xl text-gray-600">
@@ -79,10 +79,10 @@ export default function Home() {
         </p>
       </header>
 
-      <main className="space-y-6 max-w-6xl mx-auto w-full">
+      <main className="mx-auto w-full max-w-6xl space-y-6">
         {/* Main Graph */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-black mb-4">
+        <div className="rounded-lg bg-white p-6 shadow-lg">
+          <h2 className="mb-4 text-2xl font-bold text-black">
             H5N1 Risk Index
           </h2>
           <LineGraph
@@ -94,9 +94,9 @@ export default function Home() {
         </div>
 
         {/* Grid of smaller graphs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-4">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-bold text-black">
               Another state declare a state of emergency over bird flu before
               February?
             </h2>
@@ -108,8 +108,8 @@ export default function Home() {
             />
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-4">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-bold text-black">
               Will CDC report 10,000 or more H5 avian influenza cases in the
               United States before January 1, 2026?
             </h2>
@@ -121,8 +121,8 @@ export default function Home() {
             />
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-4">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-bold text-black">
               Detected H5N1 Variants
             </h2>
             <LineGraph
@@ -136,16 +136,16 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-8 text-center text-gray-500 text-sm max-w-6xl mx-auto w-full">
-        <div className="mb-8 p-6 bg-white rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold text-black mb-2">
+      <footer className="mx-auto mt-8 w-full max-w-6xl text-center text-sm text-gray-500">
+        <div className="mb-8 rounded-lg bg-white p-6 shadow-lg">
+          <h3 className="mb-2 text-lg font-semibold text-black">
             Stay Updated
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="mb-4 text-gray-600">
             Get update H5N1 risk levels and other risk dashboards.
           </p>
           <form
-            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
+            className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row"
             onSubmit={(e) => {
               e.preventDefault();
               const email = (e.target as HTMLFormElement).email.value;
@@ -157,12 +157,12 @@ export default function Home() {
               type="email"
               name="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="rounded-md bg-blue-500 px-6 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Subscribe
             </button>
@@ -174,7 +174,7 @@ export default function Home() {
             to see other data sources on this site,{" "}
             <a
               href="#"
-              className="text-blue-500 hover:text-blue-600 underline"
+              className="text-blue-500 underline hover:text-blue-600"
               onClick={(e) => {
                 e.preventDefault();
                 alert("Poll coming soon!");
