@@ -50,6 +50,8 @@ export default function Home() {
     return combineDataSources(polymarketTimeSeries, metaculusTimeSeries);
   }, [polymarketTimeSeries, metaculusTimeSeries]);
 
+  console.log(riskIndex);
+
   if (!mounted) return null;
 
   return (
