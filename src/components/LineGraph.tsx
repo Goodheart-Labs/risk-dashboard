@@ -9,12 +9,23 @@ import {
 } from "recharts";
 import { ChartDataPoint } from "../lib/risk-index/types";
 import { format } from "date-fns";
+import {
+  Formatter,
+  Payload,
+} from "recharts/types/component/DefaultTooltipContent";
 
 interface LineGraphProps {
   data: ChartDataPoint[];
   color: string;
   label: string;
   formatValue?: (value: number) => string;
+  tickFormatter?: (date: string) => string;
+  tooltipFormatter?: Formatter<number, string>;
+
+  tooltipLabelFormatter?: (
+    label: any,
+    payload: Payload<number, string>[],
+  ) => React.ReactNode;
 }
 
 export function LineGraph({
@@ -22,6 +33,9 @@ export function LineGraph({
   color,
   label,
   formatValue = (v: number) => v.toString(),
+  tickFormatter = (date) => format(new Date(date), "MM/dd"),
+  tooltipFormatter = (value: number) => [formatValue(value), label],
+  tooltipLabelFormatter = (date: string) => format(new Date(date), "MM/dd"),
 }: LineGraphProps) {
   return (
     <div className="relative h-[320px] w-full">
@@ -46,7 +60,7 @@ export function LineGraph({
               textAnchor: "end",
               dy: 5,
             }}
-            tickFormatter={(date) => format(new Date(date), "MM/dd")}
+            tickFormatter={tickFormatter}
           />
           <YAxis
             width={45}
@@ -54,8 +68,8 @@ export function LineGraph({
             tickFormatter={(value) => formatValue(value)}
           />
           <Tooltip
-            formatter={(value: number) => [formatValue(value), label]}
-            labelFormatter={(date) => new Date(date).toLocaleDateString()}
+            formatter={tooltipFormatter}
+            labelFormatter={tooltipLabelFormatter}
           />
           <Line
             type="monotone"

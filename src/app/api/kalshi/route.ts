@@ -28,14 +28,21 @@ export async function GET() {
       `/series/${SERIES_TICKER}/markets/${MARKET_ID}/candlesticks`,
       {
         query: {
-          start_ts,
-          end_ts,
+          start_ts: start_ts,
+          end_ts: end_ts,
           period_interval: 60,
         },
       },
     );
 
-    return Response.json({ marketData, candlesticks });
+    return Response.json({
+      marketData,
+      candlesticks,
+      dateRange: {
+        start: oneMonthAgo.toISOString(),
+        end: now.toISOString(),
+      },
+    });
   } catch (error) {
     console.error("Kalshi API error:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
