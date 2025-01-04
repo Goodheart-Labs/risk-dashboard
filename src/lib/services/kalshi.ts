@@ -1,12 +1,30 @@
 import { KalshiResponse, ChartDataPoint } from "../risk-index/types";
 
-export async function fetchKalshiData(): Promise<ChartDataPoint[]> {
-  const data = await fetchFromAPI();
+export async function fetchKalshiData({
+  marketTicker,
+  seriesTicker,
+  marketId,
+}: {
+  marketTicker: string;
+  seriesTicker: string;
+  marketId: string;
+}): Promise<ChartDataPoint[]> {
+  const data = await fetchFromAPI({ marketTicker, seriesTicker, marketId });
   return transformKalshiData(data);
 }
 
-async function fetchFromAPI(): Promise<KalshiResponse> {
-  const response = await fetch("/api/kalshi");
+async function fetchFromAPI({
+  marketTicker,
+  seriesTicker,
+  marketId,
+}: {
+  marketTicker: string;
+  seriesTicker: string;
+  marketId: string;
+}): Promise<KalshiResponse> {
+  const response = await fetch(
+    `/api/kalshi?marketTicker=${marketTicker}&seriesTicker=${seriesTicker}&marketId=${marketId}`,
+  );
   if (!response.ok) throw new Error("API failed");
   return response.json();
 }

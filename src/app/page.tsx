@@ -52,10 +52,11 @@ export default function Home() {
   const [metaculusTimeSeries, setMetaculusTimeSeries] = useState<
     ChartDataPoint[]
   >([]);
-  const [kalshiTimeSeries, setKalshiTimeSeries] = useState<ChartDataPoint[]>(
+  const [kalshiDelayTravel, setKalshiDelayTravel] = useState<ChartDataPoint[]>(
     [],
   );
   const [cdcTimeSeries, setCdcTimeSeries] = useState<ChartDataPoint[]>([]);
+  const [kalshiCases, setKalshiCases] = useState<ChartDataPoint[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -73,8 +74,13 @@ export default function Home() {
         console.error("Error loading Metaculus data:", error);
       });
 
-    fetchKalshiData()
-      .then(setKalshiTimeSeries)
+    // Kalshi delay travel
+    fetchKalshiData({
+      marketTicker: "KXCDCTRAVELH5-26-3",
+      seriesTicker: "KXCDCTRAVELH5",
+      marketId: "d02240fe-5c63-4378-885f-97657e90b783",
+    })
+      .then(setKalshiDelayTravel)
       .catch((error) => {
         console.error("Error loading Kalshi data:", error);
       });
@@ -83,6 +89,16 @@ export default function Home() {
       .then(setCdcTimeSeries)
       .catch((error) => {
         console.error("Error loading CDC data:", error);
+      });
+
+    fetchKalshiData({
+      marketTicker: "KXH5N1CASES-25-1000",
+      seriesTicker: "KXH5N1CASES",
+      marketId: "bc856764-877e-4c4d-8c3c-82f497e0bc07",
+    })
+      .then(setKalshiCases)
+      .catch((error) => {
+        console.error("Error loading Kalshi cases data:", error);
       });
   }, []);
 
@@ -178,13 +194,29 @@ export default function Home() {
             />
           </div>
 
-          <div className="col-span-full rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
             <GraphTitle
               title="Will the CDC recommend delaying non-essential travel due to H5 bird flu before 2026?"
               sourceUrl="https://kalshi.com/markets/kxcdctravelh5/avian-flu-travel-warning"
             />
             <LineGraph
-              data={kalshiTimeSeries}
+              data={kalshiDelayTravel}
+              color="#8b5cf6"
+              label="Kalshi Prediction (%)"
+              formatValue={(v) => `${v.toFixed(1)}%`}
+              tooltipLabelFormatter={(date) =>
+                format(new Date(date), "MM/dd ha")
+              }
+            />
+          </div>
+
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <GraphTitle
+              title="Above 1000 Bird Flu (H5N1) cases this year?"
+              sourceUrl="https://kalshi.com/markets/kxh5n1cases/h5n1-cases"
+            />
+            <LineGraph
+              data={kalshiCases}
               color="#8b5cf6"
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
