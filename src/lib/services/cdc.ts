@@ -18,6 +18,7 @@ function transformCdcData(data: CdcDataPoint[]): ChartDataPoint[] {
     const date = parse(point.Month, "M/1/yyyy", new Date()).toISOString();
     const cases = Object.entries(point)
       .filter(([key]) => !["Range", "Month"].includes(key))
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .reduce((sum, [_, val]) => sum + parseInt(val) || 0, 0);
 
     return { date, value: cases };
