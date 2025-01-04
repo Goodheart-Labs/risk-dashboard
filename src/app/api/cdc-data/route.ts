@@ -47,8 +47,12 @@ export async function GET() {
       skipEmptyLines: true,
     });
 
+    // Filter data to only include where range is 2020-2024
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filteredData = data.filter((row: any) => row.Range === "2020-2024");
+
     // Return JSON
-    return NextResponse.json(data, {
+    return NextResponse.json(filteredData, {
       headers: {
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
       },

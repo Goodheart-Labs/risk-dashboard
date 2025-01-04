@@ -6,12 +6,43 @@ import {
   fetchPolymarketData,
   fetchMetaculusData,
   fetchKalshiData,
+  fetchCdcData,
 } from "../lib/services";
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
 import { combineDataSources } from "../lib/risk-index/combine";
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
+import { BarGraph } from "@/components/BarGraph";
+import { LinkIcon } from "lucide-react";
+
+function GraphTitle({
+  title,
+  sourceUrl,
+}: {
+  title: string;
+  sourceUrl?: string;
+}) {
+  return (
+    <div className="mb-2 grid gap-1">
+      <div className="flex items-start gap-2">
+        <h2 className="text-pretty text-xl font-semibold tracking-tight">
+          {title}
+        </h2>
+        {sourceUrl ? (
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 opacity-30 hover:opacity-60"
+          >
+            <LinkIcon className="h-3 w-3" />
+          </a>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -24,6 +55,7 @@ export default function Home() {
   const [kalshiTimeSeries, setKalshiTimeSeries] = useState<ChartDataPoint[]>(
     [],
   );
+  const [cdcTimeSeries, setCdcTimeSeries] = useState<ChartDataPoint[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -46,6 +78,12 @@ export default function Home() {
       .catch((error) => {
         console.error("Error loading Kalshi data:", error);
       });
+
+    fetchCdcData()
+      .then(setCdcTimeSeries)
+      .catch((error) => {
+        console.error("Error loading CDC data:", error);
+      });
   }, []);
 
   // Calculate combined risk index when either data source updates
@@ -59,6 +97,14 @@ export default function Home() {
     // Otherwise combine the real data we have
     return combineDataSources(polymarketTimeSeries, metaculusTimeSeries);
   }, [polymarketTimeSeries, metaculusTimeSeries]);
+
+  useEffect(() => {
+    fetch("/api/cdc-data")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }, []);
 
   if (!mounted) return null;
 
@@ -95,9 +141,7 @@ export default function Home() {
 
       <main className="mx-auto w-full max-w-6xl space-y-6">
         <div className="rounded-lg bg-white p-6 shadow-lg">
-          <h2 className="mb-4 text-2xl font-bold text-black">
-            H5N1 Risk Index
-          </h2>
+          <GraphTitle title="H5N1 Risk Index" />
           <LineGraph
             data={riskIndex}
             color="#ef4444"
@@ -109,10 +153,10 @@ export default function Home() {
         {/* Grid of smaller graphs */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-pretty text-xl font-semibold tracking-tight">
-              Another state declare a state of emergency over bird flu before
-              February?
-            </h2>
+            <GraphTitle
+              title="Another state declare a state of emergency over bird flu before February?"
+              sourceUrl="https://polymarket.com/event/another-state-declare-a-state-of-emergency-over-bird-flu-before-february"
+            />
             <LineGraph
               data={polymarketTimeSeries}
               color="#3b82f6"
@@ -122,10 +166,10 @@ export default function Home() {
           </div>
 
           <div className="rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-pretty text-xl font-semibold tracking-tight">
-              Will CDC report 10,000 or more H5 avian influenza cases in the
-              United States before January 1, 2026?
-            </h2>
+            <GraphTitle
+              title="Will CDC report 10,000 or more H5 avian influenza cases in the United States before January 1, 2026?"
+              sourceUrl="https://www.metaculus.com/questions/30960/?sub-question=30732"
+            />
             <LineGraph
               data={metaculusTimeSeries}
               color="#10b981"
@@ -135,10 +179,10 @@ export default function Home() {
           </div>
 
           <div className="col-span-full rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-bold text-black">
-              Will the CDC recommend delaying non-essential travel due to H5
-              bird flu before 2026?
-            </h2>
+            <GraphTitle
+              title="Will the CDC recommend delaying non-essential travel due to H5 bird flu before 2026?"
+              sourceUrl="https://kalshi.com/markets/kxcdctravelh5/avian-flu-travel-warning"
+            />
             <LineGraph
               data={kalshiTimeSeries}
               color="#8b5cf6"
@@ -146,6 +190,23 @@ export default function Home() {
               formatValue={(v) => `${v.toFixed(1)}%`}
               tooltipLabelFormatter={(date) =>
                 format(new Date(date), "MM/dd ha")
+              }
+            />
+          </div>
+
+          <div className="col-span-full rounded-lg bg-white p-6 shadow-lg">
+            <GraphTitle
+              title="Monthly H5N1 Cases Worldwide"
+              sourceUrl="https://www.cdc.gov/bird-flu/php/avian-flu-summary/chart-epi-curve-ah5n1.html"
+            />
+            <BarGraph
+              data={cdcTimeSeries}
+              color="#f97316"
+              label="Cases"
+              formatValue={(v) => v.toString()}
+              tickFormatter={(date) => format(new Date(date), "MMM ''yy")}
+              tooltipLabelFormatter={(date) =>
+                format(new Date(date), "MMMM yyyy")
               }
             />
           </div>

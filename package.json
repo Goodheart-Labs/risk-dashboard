@@ -13,17 +13,18 @@
     "lint:fix": "eslint --fix src"
   },
   "dependencies": {
+    "api": "^6.1.2",
     "date-fns": "^4.1.0",
+    "json-schema-to-ts": "^2.8.0-beta.0",
+    "lucide-react": "^0.469.0",
     "next": "15.1.3",
+    "oas": "^20.10.3",
     "papaparse": "^5.4.1",
     "playwright-aws-lambda": "^0.11.0",
     "playwright-core": "^1.49.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "recharts": "^2.15.0",
-    "api": "^6.1.2",
-    "json-schema-to-ts": "^2.8.0-beta.0",
-    "oas": "^20.10.3"
+    "recharts": "^2.15.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

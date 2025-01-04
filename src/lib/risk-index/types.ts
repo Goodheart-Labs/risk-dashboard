@@ -84,3 +84,8 @@ export type KalshiResponse = {
     end: string; // ISO string
   };
 };
+
+export type CdcDataPoint = {
+  Range: string;
+  Month: string;
+} & Record<string, string>;
