@@ -1,10 +1,10 @@
 - add posthog
-- switch to 10k plus
-- cdc data not working
-- set up bird flu dashboard namecheap
 
 - Agent to check for None and send email to Nathan
 
+- ~~switch to 10k plus~~
+- ~~cdc data not working~~
+- ~~set up bird flu dashboard namecheap~~
 - ~~Add email names to google sheet~~
 - ~~Add this kalshi case - https://kalshi.com/markets/kxh5n1cases/h5n1-cases~~
 - ~~Get timeseries data for polymarket~~

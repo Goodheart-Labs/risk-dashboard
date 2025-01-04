@@ -95,9 +95,9 @@ export default function Home() {
       });
 
     fetchKalshiData({
-      marketTicker: "KXH5N1CASES-25-1000",
+      marketTicker: "KXH5N1CASES-25-10000",
       seriesTicker: "KXH5N1CASES",
-      marketId: "bc856764-877e-4c4d-8c3c-82f497e0bc07",
+      marketId: "23d87c35-5c09-4c30-a2b6-842c5b2865de",
     })
       .then(setKalshiCases)
       .catch((error) => {
@@ -215,7 +215,7 @@ export default function Home() {
 
           <div className="rounded-lg bg-white p-6 shadow-lg">
             <GraphTitle
-              title="Above 1000 Bird Flu (H5N1) cases this year?"
+              title="Above 10,000 Bird Flu (H5N1) cases this year?"
               sourceUrl="https://kalshi.com/markets/kxh5n1cases/h5n1-cases"
             />
             <LineGraph
