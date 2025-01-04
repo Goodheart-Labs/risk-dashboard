@@ -57,6 +57,9 @@ export default function Home() {
   );
   const [cdcTimeSeries, setCdcTimeSeries] = useState<ChartDataPoint[]>([]);
   const [kalshiCases, setKalshiCases] = useState<ChartDataPoint[]>([]);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
   useEffect(() => {
     setMounted(true);
@@ -256,11 +259,24 @@ export default function Home() {
           </p>
           <form
             className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               const email = (e.target as HTMLFormElement).email.value;
-              alert(`Thanks! We'll send updates to ${email}`);
-              (e.target as HTMLFormElement).reset();
+
+              try {
+                const res = await fetch("/api/email", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ email }),
+                });
+
+                if (!res.ok) throw new Error();
+
+                setSubmitStatus("success");
+                (e.target as HTMLFormElement).reset();
+              } catch {
+                setSubmitStatus("error");
+              }
             }}
           >
             <input
@@ -277,6 +293,16 @@ export default function Home() {
               Subscribe
             </button>
           </form>
+          {submitStatus === "success" && (
+            <p className="mt-2 text-green-600">
+              Thanks! We&apos;ll send you updates.
+            </p>
+          )}
+          {submitStatus === "error" && (
+            <p className="mt-2 text-red-600">
+              Something went wrong. Please try again.
+            </p>
+          )}
         </div>
         <div className="mb-8 text-gray-600">
           <p className="mb-2">

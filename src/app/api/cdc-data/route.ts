@@ -1,31 +1,35 @@
 import { NextResponse } from "next/server";
-import { launchChromium } from "playwright-aws-lambda";
 import { parse } from "papaparse";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 
-export const runtime = "nodejs"; // Switch to Node runtime
-export const dynamic = "force-dynamic"; // Disable static generation
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+interface CdcDataRow {
+  Range: string;
+  [key: string]: string;
+}
 
 export async function GET() {
   let browser;
   try {
-    // Launch browser
-    browser = await launchChromium({
-      chromiumSandbox: false, // Required for some serverless environments
-      headless: true, // Ensure headless mode is enabled
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
-    const context = await browser.newContext();
-    const page = await context.newPage();
 
-    // Navigate to the CDC page
+    const page = await browser.newPage();
+
     await page.goto(
       "https://www.cdc.gov/bird-flu/php/avian-flu-summary/chart-epi-curve-ah5n1.html",
       { waitUntil: "domcontentloaded" },
     );
 
-    // Wait for the download link to be available
     await page.waitForSelector('.download-links a[download="data-table.csv"]');
 
-    // Get the blob URL
     const csvData = await page.evaluate(async () => {
       const link = document.querySelector(
         '.download-links a[download="data-table.csv"]',
@@ -33,25 +37,18 @@ export async function GET() {
       const blobUrl = link?.getAttribute("href");
       if (!blobUrl) throw new Error("Could not find download link");
 
-      // Fetch the blob data
       const response = await fetch(blobUrl);
       const blob = await response.blob();
-
-      // Convert blob to text
       return await blob.text();
     });
 
-    // Parse CSV data using papaparse
-    const { data } = parse(csvData, {
+    const { data } = parse<CdcDataRow>(csvData, {
       header: true,
       skipEmptyLines: true,
     });
 
-    // Filter data to only include where range is 2020-2024
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const filteredData = data.filter((row: any) => row.Range === "2020-2024");
+    const filteredData = data.filter((row) => row.Range === "2020-2024");
 
-    // Return JSON
     return NextResponse.json(filteredData, {
       headers: {
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
