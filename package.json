@@ -31,8 +31,7 @@
     "*.{js,jsx,ts,tsx}": [
       "bun run check",
       "bun run lint:fix",
-      "bun run format",
-      "git add"
+      "bun run format"
     ]
   },
   "devDependencies": {
