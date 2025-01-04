@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "tsc --noEmit",
-    "lint:fix": "eslint --fix src"
+    "lint:fix": "eslint --fix src",
+    "prepare": "husky install"
   },
   "dependencies": {
     "api": "^6.1.2",
@@ -26,6 +27,14 @@
     "react-dom": "^18.2.0",
     "recharts": "^2.15.0"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "bun run check",
+      "bun run lint:fix",
+      "bun run format",
+      "git add"
+    ]
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^22.10.1",
@@ -35,6 +44,8 @@
     "autoprefixer": "^10.4.17",
     "eslint": "^9",
     "eslint-config-next": "15.1.3",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.3.0",
     "postcss": "^8.4.35",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
