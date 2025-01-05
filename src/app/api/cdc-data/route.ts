@@ -13,11 +13,21 @@ interface CdcDataRow {
 
 export async function GET() {
   let browser;
+
+  if (process.env.NODE_ENV === "development" && !process.env.CHROMIUM_PATH) {
+    throw new Error(
+      "CHROMIUM_PATH is not set in development mode. Please run `bun install:chromium` to install Chromium.",
+    );
+  }
+
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath:
+        process.env.NODE_ENV === "development"
+          ? process.env.CHROMIUM_PATH
+          : await chromium.executablePath(),
       headless: chromium.headless,
     });
 

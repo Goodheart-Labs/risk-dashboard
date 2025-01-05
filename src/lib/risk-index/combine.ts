@@ -14,16 +14,16 @@ export interface CombineResult {
 
 function interpolateValue(
   date: string,
-  points: ChartDataPoint[]
+  points: ChartDataPoint[],
 ): number | undefined {
   if (points.length === 0) return undefined;
 
   // Sort points by date
   const sortedPoints = [...points].sort((a, b) => a.date.localeCompare(b.date));
-  
+
   // Find the points before and after our target date
-  const before = sortedPoints.filter(p => p.date <= date).pop();
-  const after = sortedPoints.find(p => p.date > date);
+  const before = sortedPoints.filter((p) => p.date <= date).pop();
+  const after = sortedPoints.find((p) => p.date > date);
 
   // If we have an exact match, use it
   if (before?.date === date) return before.value;
@@ -73,11 +73,11 @@ export function combineDataSources(
   kalshiTravelPoints: ChartDataPoint[] = [],
   kalshiCasesPoints: ChartDataPoint[] = [],
 ): CombineResult {
-  console.log('Input data points:', {
+  console.log("Input data points:", {
     poly: polymarketPoints.length,
     meta: metaculusPoints.length,
     travel: kalshiTravelPoints.length,
-    cases: kalshiCasesPoints.length
+    cases: kalshiCasesPoints.length,
   });
 
   // Create hourly datasets for each source
@@ -86,43 +86,46 @@ export function combineDataSources(
   const hourlyTravel = createHourlyDataset(kalshiTravelPoints);
   const hourlyCases = createHourlyDataset(kalshiCasesPoints);
 
-  console.log('Hourly datasets:', {
+  console.log("Hourly datasets:", {
     poly: hourlyPoly.length,
     meta: hourlyMeta.length,
     travel: hourlyTravel.length,
-    cases: hourlyCases.length
+    cases: hourlyCases.length,
   });
 
   // Get all unique dates from hourly datasets
   const allDates = new Set([
-    ...hourlyPoly.map(p => p.date),
-    ...hourlyMeta.map(p => p.date),
-    ...hourlyTravel.map(p => p.date),
-    ...hourlyCases.map(p => p.date),
+    ...hourlyPoly.map((p) => p.date),
+    ...hourlyMeta.map((p) => p.date),
+    ...hourlyTravel.map((p) => p.date),
+    ...hourlyCases.map((p) => p.date),
   ]);
 
-  console.log('Unique dates:', allDates.size);
+  console.log("Unique dates:", allDates.size);
 
   // Create maps for quick lookup
-  const polyByDate = new Map(hourlyPoly.map(p => [p.date, p.value]));
-  const metaByDate = new Map(hourlyMeta.map(p => [p.date, p.value]));
-  const travelByDate = new Map(hourlyTravel.map(p => [p.date, p.value]));
-  const casesByDate = new Map(hourlyCases.map(p => [p.date, p.value]));
+  const polyByDate = new Map(hourlyPoly.map((p) => [p.date, p.value]));
+  const metaByDate = new Map(hourlyMeta.map((p) => [p.date, p.value]));
+  const travelByDate = new Map(hourlyTravel.map((p) => [p.date, p.value]));
+  const casesByDate = new Map(hourlyCases.map((p) => [p.date, p.value]));
 
   // Sample a few dates to check values
   const sampleDates = Array.from(allDates).slice(0, 3);
-  console.log('Sample date values:', sampleDates.map(date => ({
-    date,
-    poly: polyByDate.get(date),
-    meta: metaByDate.get(date),
-    travel: travelByDate.get(date),
-    cases: casesByDate.get(date)
-  })));
+  console.log(
+    "Sample date values:",
+    sampleDates.map((date) => ({
+      date,
+      poly: polyByDate.get(date),
+      meta: metaByDate.get(date),
+      travel: travelByDate.get(date),
+      cases: casesByDate.get(date),
+    })),
+  );
 
   // Combine the hourly data points
   const combinedData = Array.from(allDates)
     .sort()
-    .map(date => {
+    .map((date) => {
       const polyValue = polyByDate.get(date);
       const metaValue = metaByDate.get(date);
       const travelValue = travelByDate.get(date);
@@ -133,7 +136,7 @@ export function combineDataSources(
         poly: polyValue !== undefined ? polyValue * 0.1 : undefined,
         meta: metaValue !== undefined ? metaValue * 1.0 : undefined,
         travel: travelValue !== undefined ? travelValue * 0.25 : undefined,
-        cases: casesValue !== undefined ? casesValue * 0.3 : undefined
+        cases: casesValue !== undefined ? casesValue * 0.3 : undefined,
       };
 
       // Calculate total weight of available values
@@ -141,7 +144,7 @@ export function combineDataSources(
         polyValue !== undefined ? 0.1 : 0,
         metaValue !== undefined ? 1.0 : 0,
         travelValue !== undefined ? 0.25 : 0,
-        casesValue !== undefined ? 0.3 : 0
+        casesValue !== undefined ? 0.3 : 0,
       ];
 
       const totalWeight = availableWeights.reduce((a, b) => a + b, 0);
@@ -154,14 +157,14 @@ export function combineDataSources(
         weightedValues.poly,
         weightedValues.meta,
         weightedValues.travel,
-        weightedValues.cases
+        weightedValues.cases,
       ]
         .filter((v): v is number => v !== undefined)
         .reduce((a, b) => a + b, 0);
 
       return {
         date,
-        value: weightedSum / totalWeight
+        value: weightedSum / totalWeight,
       };
     })
     .filter((point): point is ChartDataPoint => point !== null);
@@ -172,7 +175,7 @@ export function combineDataSources(
       poly: hourlyPoly,
       meta: hourlyMeta,
       travel: hourlyTravel,
-      cases: hourlyCases
-    }
+      cases: hourlyCases,
+    },
   };
 }

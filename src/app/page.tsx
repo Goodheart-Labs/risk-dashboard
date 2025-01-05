@@ -38,7 +38,7 @@ function GraphTitle({
         {title}
         {tooltipContent && <InfoTooltip content={tooltipContent} />}
       </h2>
-      <LinkIcon className="mt-2 h-3 w-3 opacity-30 group-hover:opacity-60" />
+      <LinkIcon className="mt-2 h-3 w-3 shrink-0 opacity-30 group-hover:opacity-60" />
     </a>
   ) : (
     <h2 className="text-pretty text-xl font-semibold tracking-tight text-gray-900">
@@ -75,36 +75,22 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    let polymarketLoaded = false;
-    let metaculusLoaded = false;
 
     // Load data from services
     fetchPolymarketData(PREDICTION_MARKETS.POLYMARKET.SLUG)
       .then((data) => {
-        console.log("Polymarket data loaded:", data);
         setPolymarketTimeSeries(data);
-        polymarketLoaded = true;
       })
       .catch((error) => {
         console.error("Error loading Polymarket data:", error);
-        polymarketLoaded = true;
       });
 
     fetchMetaculusData(PREDICTION_MARKETS.METACULUS.QUESTION_ID)
       .then((data) => {
-        console.log("Metaculus data loaded:", data);
         setMetaculusTimeSeries(data);
-        metaculusLoaded = true;
       })
       .catch((error) => {
         console.error("Error loading Metaculus data:", error);
-        metaculusLoaded = true;
-      })
-      .finally(() => {
-        if (polymarketLoaded && metaculusLoaded) {
-          console.log("All main data loaded, setting isLoading to false");
-          setIsLoading(false);
-        }
       });
 
     // Kalshi delay travel
@@ -114,7 +100,6 @@ export default function Home() {
       marketId: "d02240fe-5c63-4378-885f-97657e90b783",
     })
       .then((data) => {
-        console.log("Kalshi travel data loaded:", data);
         setKalshiDelayTravel(data);
       })
       .catch((error) => {
@@ -133,13 +118,30 @@ export default function Home() {
       marketId: "23d87c35-5c09-4c30-a2b6-842c5b2865de",
     })
       .then((data) => {
-        console.log("Kalshi cases data loaded:", data);
         setKalshiCases(data);
       })
       .catch((error) => {
         console.error("Error loading Kalshi cases data:", error);
       });
   }, []);
+
+  // Check the length of each dataset to know when loading is complete
+  useEffect(() => {
+    if (
+      polymarketTimeSeries.length &&
+      metaculusTimeSeries.length &&
+      kalshiCases.length &&
+      kalshiDelayTravel.length
+    ) {
+      setIsLoading(false);
+    }
+  }, [
+    polymarketTimeSeries,
+    metaculusTimeSeries,
+    kalshiCases,
+    kalshiDelayTravel,
+    cdcTimeSeries,
+  ]);
 
   // Calculate combined risk index and interpolated datasets when data updates
   const { riskIndex, hourlyDatasets } = useMemo(() => {
@@ -166,14 +168,6 @@ export default function Home() {
     kalshiDelayTravel,
     kalshiCases,
   ]);
-
-  useEffect(() => {
-    fetch("/api/cdc-data")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
-  }, []);
 
   if (!mounted) return null;
 
@@ -231,17 +225,6 @@ export default function Home() {
               const point = riskIndex.find((p) => p.value === value);
               if (!point?.date)
                 return [value.toFixed(1) + "%", "Risk index value"];
-
-              console.log("Looking up tooltip for date:", point.date, {
-                datasets: hourlyDatasets,
-                foundPoint: point,
-                poly: hourlyDatasets.poly?.find((p) => p.date === point.date),
-                meta: hourlyDatasets.meta?.find((p) => p.date === point.date),
-                travel: hourlyDatasets.travel?.find(
-                  (p) => p.date === point.date,
-                ),
-                cases: hourlyDatasets.cases?.find((p) => p.date === point.date),
-              });
 
               const poly = hourlyDatasets.poly?.find(
                 (p) => p.date === point.date,

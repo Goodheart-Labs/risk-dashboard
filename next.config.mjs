@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const config = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'unavatar.io',
+        protocol: "https",
+        hostname: "unavatar.io",
       },
     ],
   },
-} 
+};
+
+export default config;
