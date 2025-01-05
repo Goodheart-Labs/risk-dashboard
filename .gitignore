@@ -40,5 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# playwright browsers
+.local-browsers/
+node_modules/playwright-core/.local-browsers/
+
 /keys
 .env*.local

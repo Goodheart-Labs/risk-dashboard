@@ -1,20 +1,13 @@
 import { kalshiFetch } from "@/lib/kalshi/fetch";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const marketTicker = searchParams.get("marketTicker");
-  const seriesTicker = searchParams.get("seriesTicker");
-  const marketId = searchParams.get("marketId");
+const MARKET_TICKER = "KXCDCTRAVELH5-26-3";
+const SERIES_TICKER = "KXCDCTRAVELH5";
+// 👇 Had to get this from looking at the request in the browser
+const MARKET_ID = "d02240fe-5c63-4378-885f-97657e90b783";
 
-  if (!marketTicker || !seriesTicker || !marketId) {
-    return Response.json(
-      { error: "Missing required parameters" },
-      { status: 400 },
-    );
-  }
-
+export async function GET() {
   try {
-    const marketData = await kalshiFetch(`/markets/${marketTicker}`);
+    const marketData = await kalshiFetch(`/markets/${MARKET_TICKER}`);
 
     const openTime = new Date(marketData.market.open_time);
     const now = new Date();
@@ -29,7 +22,7 @@ export async function GET(request: Request) {
     const end_ts = Math.floor(now.getTime() / 1000);
 
     const candlesticks = await kalshiFetch(
-      `/series/${seriesTicker}/markets/${marketId}/candlesticks`,
+      `/series/${SERIES_TICKER}/markets/${MARKET_ID}/candlesticks`,
       {
         query: {
           start_ts: start_ts,

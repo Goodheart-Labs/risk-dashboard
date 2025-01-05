@@ -9,23 +9,65 @@ import {
 } from "recharts";
 import { ChartDataPoint } from "../lib/risk-index/types";
 import { format } from "date-fns";
-import {
-  Formatter,
-  Payload,
-} from "recharts/types/component/DefaultTooltipContent";
 
-interface LineGraphProps {
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+  formatter: (value: number) => [string, string];
+  labelFormatter: (date: string) => string;
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  label,
+  formatter,
+  labelFormatter,
+}: CustomTooltipProps) {
+  if (!active || !payload || !payload[0]) return null;
+
+  const [content] = formatter(payload[0].value);
+  const lines = content.split("<br />");
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
+      <p className="mb-2 font-medium text-gray-900">
+        {labelFormatter(label || "")}
+      </p>
+      {lines.map((line, i) => {
+        // Extract the number between <b> tags if it exists
+        const match = line.match(/<b>(.*?)<\/b>/);
+        if (match) {
+          const [fullMatch, number] = match;
+          const [before, after] = line.split(fullMatch);
+          return (
+            <p key={i} className="whitespace-nowrap text-gray-700">
+              {before}
+              <span className="font-bold">{number}</span>
+              {after}
+            </p>
+          );
+        }
+        return (
+          <p key={i} className="whitespace-nowrap text-gray-700">
+            {line}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+export interface LineGraphProps {
   data: ChartDataPoint[];
   color: string;
   label: string;
   formatValue?: (value: number) => string;
   tickFormatter?: (date: string) => string;
-  tooltipFormatter?: Formatter<number, string>;
-  tooltipLabelFormatter?: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    label: any,
-    payload: Payload<number, string>[],
-  ) => React.ReactNode;
+  tooltipFormatter?: (value: number) => [string, string];
+  tooltipLabelFormatter?: (date: string) => string;
+  domain?: [number, number];
 }
 
 export function LineGraph({
@@ -33,9 +75,10 @@ export function LineGraph({
   color,
   label,
   formatValue = (v: number) => v.toString(),
-  tickFormatter = (date) => format(new Date(date), "MM/dd"),
+  tickFormatter = (date) => format(new Date(date), "MMM d"),
   tooltipFormatter = (value: number) => [formatValue(value), label],
-  tooltipLabelFormatter = (date: string) => format(new Date(date), "MM/dd"),
+  tooltipLabelFormatter = (date: string) => format(new Date(date), "MMM d"),
+  domain,
 }: LineGraphProps) {
   return (
     <div className="relative h-[320px] w-full">
@@ -46,8 +89,8 @@ export function LineGraph({
           margin={{
             top: 40,
             right: 16,
-            left: 0,
-            bottom: 10,
+            left: 16,
+            bottom: 40,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
@@ -66,10 +109,15 @@ export function LineGraph({
             width={45}
             tick={{ fontSize: 12 }}
             tickFormatter={(value) => formatValue(value)}
+            domain={domain}
           />
           <Tooltip
-            formatter={tooltipFormatter}
-            labelFormatter={tooltipLabelFormatter}
+            content={
+              <CustomTooltip
+                formatter={tooltipFormatter}
+                labelFormatter={tooltipLabelFormatter}
+              />
+            }
           />
           <Line
             type="monotone"
