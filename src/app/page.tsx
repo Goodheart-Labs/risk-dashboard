@@ -10,14 +10,17 @@ import {
 } from "../lib/services";
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
-import { combineDataSources, HourlyDatasets } from "../lib/risk-index/combine";
+import {
+  combineDataSources2,
+  HourlyDatasets,
+  WEIGHTS,
+} from "../lib/risk-index/combine-2";
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
 import { BarGraph } from "@/components/BarGraph";
 import { LinkIcon } from "lucide-react";
 import { InfoTooltip } from "../components/InfoTooltip";
 import Image from "next/image";
-import { combineDataSources2 } from "@/lib/risk-index/combine-2";
 
 function GraphTitle({
   title,
@@ -155,20 +158,12 @@ export default function Home() {
     }
 
     setError(null);
-    combineDataSources2(
+    return combineDataSources2(
       polymarketTimeSeries,
       metaculusTimeSeries,
       kalshiDelayTravel,
       kalshiCases,
     );
-
-    const { combinedData, hourlyDatasets } = combineDataSources(
-      polymarketTimeSeries,
-      metaculusTimeSeries,
-      kalshiDelayTravel,
-      kalshiCases,
-    );
-    return { riskIndex: combinedData, hourlyDatasets };
   }, [
     isLoading,
     polymarketTimeSeries,
@@ -218,10 +213,10 @@ export default function Home() {
           <GraphTitle
             title="H5N1 Risk Index"
             tooltipContent={`Combined prediction from multiple sources:
-• Polymarket: Will a US state declare emergency? * .1
-• Metaculus: Will CDC report 10,000+ cases by 2026?
-• Kalshi Travel: Will CDC recommend delaying travel? * .25
-• Kalshi Cases: Will there be 1000+ cases this year? * .3`}
+• Polymarket: Will a US state declare emergency? * ${WEIGHTS.polymarket}
+• Metaculus: Will CDC report 10,000+ cases by 2026? * ${WEIGHTS.metaculus}
+• Kalshi Travel: Will CDC recommend delaying travel? * ${WEIGHTS.kalshiDelayTravel}
+• Kalshi Cases: Will there be 1000+ cases this year? * ${WEIGHTS.kalshiCases}`}
           />
           <LineGraph
             data={riskIndex}
@@ -251,10 +246,10 @@ export default function Home() {
                 [
                   `Risk index value: <b>${value.toFixed(1)}%</b>`,
                   `Formed from an average of:`,
-                  `• US state emergency before Feb: <b>${poly ? (poly.value * 0.1).toFixed(1) : "-"}%</b> (Polymarket × 0.1)`,
-                  `• 10,000 US cases before 2026: <b>${meta ? meta.value.toFixed(1) : "-"}%</b> (Metaculus)`,
-                  `• 1,000 US cases this year: <b>${kalshiC ? (kalshiC.value * 0.3).toFixed(1) : "-"}%</b> (Kalshi × 0.3)`,
-                  `• CDC travel warning before 2026: <b>${kalshiT ? (kalshiT.value * 0.25).toFixed(1) : "-"}%</b> (Kalshi × 0.25)`,
+                  `• US state emergency before Feb: <b>${poly ? (poly.value * WEIGHTS.polymarket).toFixed(1) : "-"}%</b> (Polymarket × ${WEIGHTS.polymarket})`,
+                  `• 10,000 US cases before 2026: <b>${meta ? meta.value.toFixed(1) : "-"}%</b> (Metaculus × ${WEIGHTS.metaculus})`,
+                  `• 10,000 US cases this year: <b>${kalshiC ? (kalshiC.value * WEIGHTS.kalshiCases).toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiCases})`,
+                  `• CDC travel warning before 2026: <b>${kalshiT ? (kalshiT.value * WEIGHTS.kalshiDelayTravel).toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiDelayTravel})`,
                 ].join("<br />"),
                 "",
               ];

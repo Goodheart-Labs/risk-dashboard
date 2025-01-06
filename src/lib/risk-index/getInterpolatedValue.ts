@@ -9,7 +9,7 @@ import { ChartDataPoint } from "./types";
 export function getInterpolatedValue(
   data: ChartDataPoint[],
   targetDate: string,
-): number | undefined {
+) {
   // Convert target date to timestamp for comparison
   const targetTime = new Date(targetDate).getTime();
 
@@ -40,6 +40,16 @@ export function getInterpolatedValue(
     return before.value + valueDiff * timeRatio;
   }
 
-  // Return closest point if we only have one side
-  return before?.value ?? after?.value;
+  if (before && !after) {
+    console.log("No data found for", targetDate);
+    return before.value;
+  }
+
+  if (after && !before) {
+    console.log("No data found for", targetDate);
+    return after.value;
+  }
+
+  console.log("No data found for", targetDate);
+  return 0;
 }
