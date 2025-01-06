@@ -248,6 +248,10 @@ export default function Home() {
             label="Risk index value"
             formatValue={(v) => `${v.toFixed(1)}%`}
             domain={[0, 100]}
+            tickFormatter={(date) => format(new Date(date), "MMM d ha")}
+            tooltipLabelFormatter={(date) =>
+              format(new Date(date), "MMM d - ha 'UTC'")
+            }
             tooltipFormatter={(value) => {
               const point = riskIndex.find((p) => p.value === value);
               if (!point?.date)
@@ -270,10 +274,10 @@ export default function Home() {
                 [
                   `Risk index value: <b>${value.toFixed(1)}%</b>`,
                   `Formed from an average of:`,
-                  `• US state emergency before Feb: <b>${poly ? (poly.value * WEIGHTS.polymarket).toFixed(1) : "-"}%</b> (Polymarket × ${WEIGHTS.polymarket})`,
+                  `• US state emergency before Feb: <b>${poly ? poly.value.toFixed(1) : "-"}%</b> (Polymarket × ${WEIGHTS.polymarket})`,
                   `• 10,000 US cases before 2026: <b>${meta ? meta.value.toFixed(1) : "-"}%</b> (Metaculus × ${WEIGHTS.metaculus})`,
-                  `• 10,000 US cases this year: <b>${kalshiC ? (kalshiC.value * WEIGHTS.kalshiCases).toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiCases})`,
-                  `• CDC travel warning before 2026: <b>${kalshiT ? (kalshiT.value * WEIGHTS.kalshiDelayTravel).toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiDelayTravel})`,
+                  `• 10,000 US cases this year: <b>${kalshiC ? kalshiC.value.toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiCases})`,
+                  `• CDC travel warning before 2026: <b>${kalshiT ? kalshiT.value.toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiDelayTravel})`,
                 ].join("<br />"),
                 "",
               ];
@@ -329,7 +333,7 @@ export default function Home() {
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
               tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MM/dd ha")
+                format(new Date(date), "MMM d - HH:mm 'UTC'")
               }
               domain={[0, 100]}
             />
@@ -347,7 +351,7 @@ export default function Home() {
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
               tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MM/dd ha")
+                format(new Date(date), "MMM d - HH:mm 'UTC'")
               }
               domain={[0, 100]}
             />

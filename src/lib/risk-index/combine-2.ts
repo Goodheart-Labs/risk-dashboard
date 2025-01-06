@@ -25,11 +25,6 @@ export function combineDataSources2(
   kalshiDelayTravel: ChartDataPoint[],
   kalshiCases: ChartDataPoint[],
 ) {
-  console.log("polymarketTimeSeries", polymarketTimeSeries.slice(-3));
-  console.log("metaculusTimeSeries", metaculusTimeSeries.slice(-3));
-  console.log("kalshiDelayTravel", kalshiDelayTravel.slice(-3));
-  console.log("kalshiCases", kalshiCases.slice(-3));
-
   // Assume series are already sorted by date
   // Choose a start time from the most recent 0-index point
   const start = [
@@ -48,9 +43,6 @@ export function combineDataSources2(
     kalshiCases[kalshiCases.length - 1],
   ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
     .date;
-
-  console.log("start", start);
-  console.log("end", end);
 
   // Set the start and end date to the nearest hour
   const startDate = new Date(start).setMinutes(0, 0, 0);
