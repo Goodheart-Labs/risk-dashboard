@@ -29,7 +29,7 @@ function GraphTitle({
 }: {
   title: string;
   sourceUrl?: string;
-  tooltipContent?: string;
+  tooltipContent?: React.ReactNode;
 }) {
   const TitleComponent = sourceUrl ? (
     <a
@@ -38,14 +38,14 @@ function GraphTitle({
       rel="noopener noreferrer"
       className="group flex items-start gap-2"
     >
-      <h2 className="text-pretty text-xl font-semibold tracking-tight text-gray-900 group-hover:text-blue-600">
+      <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900 group-hover:text-blue-600">
         {title}
         {tooltipContent && <InfoTooltip content={tooltipContent} />}
       </h2>
       <LinkIcon className="mt-2 h-3 w-3 shrink-0 opacity-30 group-hover:opacity-60" />
     </a>
   ) : (
-    <h2 className="text-pretty text-xl font-semibold tracking-tight text-gray-900">
+    <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900">
       {title}
       {tooltipContent && <InfoTooltip content={tooltipContent} />}
     </h2>
@@ -212,11 +212,35 @@ export default function Home() {
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <GraphTitle
             title="H5N1 Risk Index"
-            tooltipContent={`Combined prediction from multiple sources:
-• Polymarket: Will a US state declare emergency? * ${WEIGHTS.polymarket}
-• Metaculus: Will CDC report 10,000+ cases by 2026? * ${WEIGHTS.metaculus}
-• Kalshi Travel: Will CDC recommend delaying travel? * ${WEIGHTS.kalshiDelayTravel}
-• Kalshi Cases: Will there be 1000+ cases this year? * ${WEIGHTS.kalshiCases}`}
+            tooltipContent={
+              <div className="space-y-2">
+                <p>Combined prediction from multiple sources:</p>
+                <ul className="list-none space-y-1.5">
+                  <li>
+                    <span className="font-medium">Polymarket</span>: Will a US
+                    state declare emergency?{" "}
+                    <span className="opacity-75">× {WEIGHTS.polymarket}</span>
+                  </li>
+                  <li>
+                    <span className="font-medium">Metaculus</span>: Will CDC
+                    report 10,000+ cases by 2026?{" "}
+                    <span className="opacity-75">× {WEIGHTS.metaculus}</span>
+                  </li>
+                  <li>
+                    <span className="font-medium">Kalshi Travel</span>: Will CDC
+                    recommend delaying travel?{" "}
+                    <span className="opacity-75">
+                      × {WEIGHTS.kalshiDelayTravel}
+                    </span>
+                  </li>
+                  <li>
+                    <span className="font-medium">Kalshi Cases</span>: Will
+                    there be 1000+ cases this year?{" "}
+                    <span className="opacity-75">× {WEIGHTS.kalshiCases}</span>
+                  </li>
+                </ul>
+              </div>
+            }
           />
           <LineGraph
             data={riskIndex}
