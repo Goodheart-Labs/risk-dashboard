@@ -75,9 +75,23 @@ export function LineGraph({
   color,
   label,
   formatValue = (v: number) => v.toString(),
-  tickFormatter = (date) => format(new Date(date), "MMM d"),
+  tickFormatter = (date) => {
+    try {
+      return format(new Date(date), "MMM d");
+    } catch (error) {
+      console.error("Invalid date value:", date, error);
+      return "Invalid Date";
+    }
+  },
   tooltipFormatter = (value: number) => [formatValue(value), label],
-  tooltipLabelFormatter = (date: string) => format(new Date(date), "MMM d"),
+  tooltipLabelFormatter = (date: string) => {
+    try {
+      return format(new Date(date), "MMM d");
+    } catch (error) {
+      console.error("Invalid tooltip date value:", date, error);
+      return "Invalid Date";
+    }
+  },
   domain,
 }: LineGraphProps) {
   return (

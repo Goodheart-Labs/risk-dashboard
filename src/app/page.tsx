@@ -10,7 +10,11 @@ import {
 } from "../lib/services";
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
-import { combineDataSources, HourlyDatasets } from "../lib/risk-index/combine";
+import {
+  combineDataSources2,
+  HourlyDatasets,
+  WEIGHTS,
+} from "../lib/risk-index/combine-2";
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
 import { BarGraph } from "@/components/BarGraph";
@@ -25,7 +29,7 @@ function GraphTitle({
 }: {
   title: string;
   sourceUrl?: string;
-  tooltipContent?: string;
+  tooltipContent?: React.ReactNode;
 }) {
   const TitleComponent = sourceUrl ? (
     <a
@@ -34,14 +38,14 @@ function GraphTitle({
       rel="noopener noreferrer"
       className="group flex items-start gap-2"
     >
-      <h2 className="text-pretty text-xl font-semibold tracking-tight text-gray-900 group-hover:text-blue-600">
+      <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900 group-hover:text-blue-600">
         {title}
         {tooltipContent && <InfoTooltip content={tooltipContent} />}
       </h2>
       <LinkIcon className="mt-2 h-3 w-3 shrink-0 opacity-30 group-hover:opacity-60" />
     </a>
   ) : (
-    <h2 className="text-pretty text-xl font-semibold tracking-tight text-gray-900">
+    <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900">
       {title}
       {tooltipContent && <InfoTooltip content={tooltipContent} />}
     </h2>
@@ -154,13 +158,12 @@ export default function Home() {
     }
 
     setError(null);
-    const { combinedData, hourlyDatasets } = combineDataSources(
+    return combineDataSources2(
       polymarketTimeSeries,
       metaculusTimeSeries,
       kalshiDelayTravel,
       kalshiCases,
     );
-    return { riskIndex: combinedData, hourlyDatasets };
   }, [
     isLoading,
     polymarketTimeSeries,
@@ -175,7 +178,7 @@ export default function Home() {
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
       <header className="mx-auto mb-8 w-full max-w-6xl text-center">
         <h1 className="my-4 text-2xl font-bold text-black md:text-5xl">
-          Will H5N1 be the next COVID?
+          Will bird flu be the next COVID?
         </h1>
         <p className="mb-4 text-2xl text-gray-700">
           {isLoading ? (
@@ -209,11 +212,35 @@ export default function Home() {
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <GraphTitle
             title="H5N1 Risk Index"
-            tooltipContent={`Combined prediction from multiple sources:
-• Polymarket: Will a US state declare emergency? * .1
-• Metaculus: Will CDC report 10,000+ cases by 2026?
-• Kalshi Travel: Will CDC recommend delaying travel? * .25
-• Kalshi Cases: Will there be 1000+ cases this year? * .3`}
+            tooltipContent={
+              <div className="space-y-2">
+                <p>Combined prediction from multiple sources:</p>
+                <ul className="list-none space-y-1.5">
+                  <li>
+                    <span className="font-medium">Polymarket</span>: Will a US
+                    state declare emergency?{" "}
+                    <span className="opacity-75">× {WEIGHTS.polymarket}</span>
+                  </li>
+                  <li>
+                    <span className="font-medium">Metaculus</span>: Will CDC
+                    report 10,000+ cases by 2026?{" "}
+                    <span className="opacity-75">× {WEIGHTS.metaculus}</span>
+                  </li>
+                  <li>
+                    <span className="font-medium">Kalshi Travel</span>: Will CDC
+                    recommend delaying travel?{" "}
+                    <span className="opacity-75">
+                      × {WEIGHTS.kalshiDelayTravel}
+                    </span>
+                  </li>
+                  <li>
+                    <span className="font-medium">Kalshi Cases</span>: Will
+                    there be 1000+ cases this year?{" "}
+                    <span className="opacity-75">× {WEIGHTS.kalshiCases}</span>
+                  </li>
+                </ul>
+              </div>
+            }
           />
           <LineGraph
             data={riskIndex}
@@ -221,6 +248,10 @@ export default function Home() {
             label="Risk index value"
             formatValue={(v) => `${v.toFixed(1)}%`}
             domain={[0, 100]}
+            tickFormatter={(date) => format(new Date(date), "MMM d ha")}
+            tooltipLabelFormatter={(date) =>
+              format(new Date(date), "MMM d - ha 'UTC'")
+            }
             tooltipFormatter={(value) => {
               const point = riskIndex.find((p) => p.value === value);
               if (!point?.date)
@@ -243,10 +274,10 @@ export default function Home() {
                 [
                   `Risk index value: <b>${value.toFixed(1)}%</b>`,
                   `Formed from an average of:`,
-                  `• US state emergency before Feb: <b>${poly ? (poly.value * 0.1).toFixed(1) : "-"}%</b> (Polymarket × 0.1)`,
-                  `• 10,000 US cases before 2026: <b>${meta ? meta.value.toFixed(1) : "-"}%</b> (Metaculus)`,
-                  `• 1,000 US cases this year: <b>${kalshiC ? (kalshiC.value * 0.3).toFixed(1) : "-"}%</b> (Kalshi × 0.3)`,
-                  `• CDC travel warning before 2026: <b>${kalshiT ? (kalshiT.value * 0.25).toFixed(1) : "-"}%</b> (Kalshi × 0.25)`,
+                  `• US state emergency before Feb: <b>${poly ? poly.value.toFixed(1) : "-"}%</b> (Polymarket × ${WEIGHTS.polymarket})`,
+                  `• 10,000 US cases before 2026: <b>${meta ? meta.value.toFixed(1) : "-"}%</b> (Metaculus × ${WEIGHTS.metaculus})`,
+                  `• 10,000 US cases this year: <b>${kalshiC ? kalshiC.value.toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiCases})`,
+                  `• CDC travel warning before 2026: <b>${kalshiT ? kalshiT.value.toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiDelayTravel})`,
                 ].join("<br />"),
                 "",
               ];
@@ -302,7 +333,7 @@ export default function Home() {
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
               tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MM/dd ha")
+                format(new Date(date), "MMM d - HH:mm 'UTC'")
               }
               domain={[0, 100]}
             />
@@ -320,7 +351,7 @@ export default function Home() {
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
               tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MM/dd ha")
+                format(new Date(date), "MMM d - HH:mm 'UTC'")
               }
               domain={[0, 100]}
             />

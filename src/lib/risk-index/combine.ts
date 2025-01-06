@@ -73,25 +73,11 @@ export function combineDataSources(
   kalshiTravelPoints: ChartDataPoint[] = [],
   kalshiCasesPoints: ChartDataPoint[] = [],
 ): CombineResult {
-  console.log("Input data points:", {
-    poly: polymarketPoints.length,
-    meta: metaculusPoints.length,
-    travel: kalshiTravelPoints.length,
-    cases: kalshiCasesPoints.length,
-  });
-
   // Create hourly datasets for each source
   const hourlyPoly = createHourlyDataset(polymarketPoints);
   const hourlyMeta = createHourlyDataset(metaculusPoints);
   const hourlyTravel = createHourlyDataset(kalshiTravelPoints);
   const hourlyCases = createHourlyDataset(kalshiCasesPoints);
-
-  console.log("Hourly datasets:", {
-    poly: hourlyPoly.length,
-    meta: hourlyMeta.length,
-    travel: hourlyTravel.length,
-    cases: hourlyCases.length,
-  });
 
   // Get all unique dates from hourly datasets
   const allDates = new Set([
@@ -101,26 +87,11 @@ export function combineDataSources(
     ...hourlyCases.map((p) => p.date),
   ]);
 
-  console.log("Unique dates:", allDates.size);
-
   // Create maps for quick lookup
   const polyByDate = new Map(hourlyPoly.map((p) => [p.date, p.value]));
   const metaByDate = new Map(hourlyMeta.map((p) => [p.date, p.value]));
   const travelByDate = new Map(hourlyTravel.map((p) => [p.date, p.value]));
   const casesByDate = new Map(hourlyCases.map((p) => [p.date, p.value]));
-
-  // Sample a few dates to check values
-  const sampleDates = Array.from(allDates).slice(0, 3);
-  console.log(
-    "Sample date values:",
-    sampleDates.map((date) => ({
-      date,
-      poly: polyByDate.get(date),
-      meta: metaByDate.get(date),
-      travel: travelByDate.get(date),
-      cases: casesByDate.get(date),
-    })),
-  );
 
   // Combine the hourly data points
   const combinedData = Array.from(allDates)

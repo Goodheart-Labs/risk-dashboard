@@ -46,6 +46,7 @@ export async function GET(request: Request) {
       },
     });
     const marketData = await marketResponse.json();
+    console.log("marketData", marketData);
 
     return NextResponse.json(marketData);
   } catch (error) {
