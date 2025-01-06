@@ -12,9 +12,9 @@ export interface HourlyDatasets {
 const TARGET_TIME_RESOLUTION = 1 * 60 * 60 * 1000;
 export const WEIGHTS = {
   polymarket: 0.1,
-  metaculus: 0.5,
+  metaculus: 1,
   kalshiDelayTravel: 0.25,
-  kalshiCases: 0.3,
+  kalshiCases: 1,
 };
 
 const WEIGHTS_SUM = Object.values(WEIGHTS).reduce((a, b) => a + b, 0);

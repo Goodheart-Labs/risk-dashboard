@@ -107,7 +107,7 @@ export function combineDataSources(
         poly: polyValue !== undefined ? polyValue * 0.1 : undefined,
         meta: metaValue !== undefined ? metaValue * 1.0 : undefined,
         travel: travelValue !== undefined ? travelValue * 0.25 : undefined,
-        cases: casesValue !== undefined ? casesValue * 0.3 : undefined,
+        cases: casesValue !== undefined ? casesValue * 1 : undefined,
       };
 
       // Calculate total weight of available values

@@ -235,7 +235,7 @@ export default function Home() {
                   </li>
                   <li>
                     <span className="font-medium">Kalshi Cases</span>: Will
-                    there be 1000+ cases this year?{" "}
+                    there be 10,000+ cases this year?{" "}
                     <span className="opacity-75">× {WEIGHTS.kalshiCases}</span>
                   </li>
                 </ul>
