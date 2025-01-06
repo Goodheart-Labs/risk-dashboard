@@ -2,10 +2,14 @@ import { NextResponse } from "next/server";
 
 const CLOB_API = "https://clob.polymarket.com";
 
+// 106312791964557364184052642373426857106392360847438469940517961069035123954706
+
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
-    // Get marketId from URL params
     const { searchParams } = new URL(request.url);
+    // Note! this actually expects a clubTokenId
     const marketId = searchParams.get("marketId");
 
     if (!marketId) {
@@ -15,14 +19,18 @@ export async function GET(request: Request) {
       );
     }
 
-    const timeseriesResponse = await fetch(
-      `${CLOB_API}/prices-history?market=${marketId}&interval=1w&fidelity=30`,
-      {
-        headers: {
-          Accept: "application/json",
-        },
+    const url = new URL(`${CLOB_API}/prices-history`);
+    url.search = new URLSearchParams({
+      market: marketId,
+      interval: "1m",
+      fidelity: "60",
+    }).toString();
+
+    const timeseriesResponse = await fetch(url, {
+      headers: {
+        Accept: "application/json",
       },
-    );
+    });
 
     if (!timeseriesResponse.ok) {
       const errorText = await timeseriesResponse.text();
@@ -39,6 +47,7 @@ export async function GET(request: Request) {
     }
 
     const timeseriesData = await timeseriesResponse.json();
+    console.log("timeseriesData", timeseriesData);
     return NextResponse.json(timeseriesData);
   } catch (error) {
     console.error("Error fetching timeseries data:", error);

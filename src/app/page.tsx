@@ -17,6 +17,7 @@ import { BarGraph } from "@/components/BarGraph";
 import { LinkIcon } from "lucide-react";
 import { InfoTooltip } from "../components/InfoTooltip";
 import Image from "next/image";
+import { combineDataSources2 } from "@/lib/risk-index/combine-2";
 
 function GraphTitle({
   title,
@@ -154,6 +155,13 @@ export default function Home() {
     }
 
     setError(null);
+    combineDataSources2(
+      polymarketTimeSeries,
+      metaculusTimeSeries,
+      kalshiDelayTravel,
+      kalshiCases,
+    );
+
     const { combinedData, hourlyDatasets } = combineDataSources(
       polymarketTimeSeries,
       metaculusTimeSeries,

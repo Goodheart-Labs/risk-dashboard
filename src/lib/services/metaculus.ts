@@ -24,7 +24,7 @@ function transformMetaculusData(data: MetaculusResponse): ChartDataPoint[] {
   if (!data?.question?.aggregations?.recency_weighted?.history) return [];
   const result = data.question.aggregations.recency_weighted.history.map(
     (point) => ({
-      date: new Date(point.start_time * 1000).toISOString().split("T")[0],
+      date: new Date(point.start_time * 1000).toISOString(),
       value: point.means[0] * 100,
     }),
   );
