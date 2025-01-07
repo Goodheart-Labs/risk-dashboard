@@ -11,10 +11,10 @@ import {
 import { PREDICTION_MARKETS } from "../lib/config";
 import { LineGraph } from "../components/LineGraph";
 import {
-  combineDataSources2,
+  combineDataSources,
   HourlyDatasets,
   WEIGHTS,
-} from "../lib/risk-index/combine-2";
+} from "../lib/risk-index/combineDataSources";
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
 import { BarGraph } from "@/components/BarGraph";
@@ -158,7 +158,7 @@ export default function Home() {
     }
 
     setError(null);
-    return combineDataSources2(
+    return combineDataSources(
       polymarketTimeSeries,
       metaculusTimeSeries,
       kalshiDelayTravel,

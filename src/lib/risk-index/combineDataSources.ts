@@ -19,7 +19,7 @@ export const WEIGHTS = {
 
 const WEIGHTS_SUM = Object.values(WEIGHTS).reduce((a, b) => a + b, 0);
 
-export function combineDataSources2(
+export function combineDataSources(
   polymarketTimeSeries: ChartDataPoint[],
   metaculusTimeSeries: ChartDataPoint[],
   kalshiDelayTravel: ChartDataPoint[],
