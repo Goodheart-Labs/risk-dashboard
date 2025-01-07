@@ -178,7 +178,8 @@ export default function Home() {
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
       <header className="mx-auto mb-8 w-full max-w-6xl text-center">
         <h1 className="my-4 text-2xl font-bold text-black md:text-5xl">
-          Will bird flu be the next COVID?
+          Will bird flu be the next COVID?{" "}
+          <InfoTooltip content="Will bird flu have an impact on people's lives on the same order of magnitude as covid? Will it cause a random person huge personal inconvenience?" />
         </h1>
         <p className="mb-4 text-2xl text-gray-700">
           {isLoading ? (
@@ -198,7 +199,7 @@ export default function Home() {
               </span>{" "}
               Our risk index gives it{" "}
               {riskIndex[riskIndex.length - 1].value.toFixed(0)} out of 100
-              (about {riskIndex[riskIndex.length - 1].value.toFixed(0)}%) on{" "}
+              (about {riskIndex[riskIndex.length - 1].value.toFixed(0)}%) as of{" "}
               <span className="inline-flex items-center">
                 {format(new Date(), "MMMM d, yyyy")}
                 <InfoTooltip content="The index is an average of predictions from Polymarket, Metaculus, and Kalshi. Polymarket and Kalshi are real money prediction markets. Metaculus is a forecasting community with a good track record." />
@@ -214,7 +215,10 @@ export default function Home() {
             title="H5N1 Risk Index"
             tooltipContent={
               <div className="space-y-2">
-                <p>Combined prediction from multiple sources:</p>
+                <p>
+                  Weighted average of multiple sources (below is each source and
+                  its weighting):
+                </p>
                 <ul className="list-none space-y-1.5">
                   <li>
                     <span className="font-medium">Polymarket</span>: Will a US
@@ -293,9 +297,9 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="rounded-lg bg-white p-6 shadow-lg">
             <GraphTitle
-              title="Another a US state other than California declare a state of emergency over bird flu before February?"
+              title="Another US State other than California declare a state of emergency over bird flu before February?"
               sourceUrl="https://polymarket.com/event/another-state-declare-a-state-of-emergency-over-bird-flu-before-february"
-              tooltipContent="A state of emergence gives the Governor additional powers. It doesn't imply lockdowns or similar."
+              tooltipContent="A state of emergence gives the Governor additional powers. It doesn't necessarily imply lockdowns or similar."
             />
             <LineGraph
               data={polymarketTimeSeries}
@@ -388,8 +392,9 @@ export default function Home() {
             Stay Updated
           </h3>
           <p className="mb-4 text-gray-600">
-            Get updated on if H5N1 risk levels change significantly or other
-            risk dashboards. Your email will not be used for other purposes.
+            Get updated on if H5N1 risk levels change significantly or if we
+            build another dashboard for some comparable risk. Your email will
+            not be used for other purposes.
           </p>
           <form
             className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row"
@@ -424,12 +429,13 @@ export default function Home() {
               type="submit"
               className="rounded-md bg-blue-500 px-6 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Subscribe
+              Update Me
             </button>
           </form>
           {submitStatus === "success" && (
             <p className="mt-2 text-green-600">
-              Thanks! We&apos;ll send you updates.
+              Thanks! We&apos;ll send you an email if the risk levels change
+              significantly or if we build another risk dashboard.
             </p>
           )}
           {submitStatus === "error" && (
