@@ -39,16 +39,31 @@ export async function GET(request: Request) {
       },
     );
 
-    return Response.json({
-      marketData,
-      candlesticks,
-      dateRange: {
-        start: oneMonthAgo.toISOString(),
-        end: now.toISOString(),
+    return Response.json(
+      {
+        marketData,
+        candlesticks,
+        dateRange: {
+          start: oneMonthAgo.toISOString(),
+          end: now.toISOString(),
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+        },
+      },
+    );
   } catch (error) {
     console.error("Kalshi API error:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json(
+      { error: "Internal server error" },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+        },
+      },
+    );
   }
 }

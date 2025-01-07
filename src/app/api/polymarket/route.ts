@@ -46,14 +46,22 @@ export async function GET(request: Request) {
       },
     });
     const marketData = await marketResponse.json();
-    console.log("marketData", marketData);
 
-    return NextResponse.json(marketData);
+    return NextResponse.json(marketData, {
+      headers: {
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+      },
+    });
   } catch (error) {
     console.error("Error fetching from Polymarket:", error);
     return NextResponse.json(
       { error: "Failed to fetch market data" },
-      { status: 500 },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+        },
+      },
     );
   }
 }

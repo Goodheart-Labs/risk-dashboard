@@ -48,9 +48,6 @@ export function combineDataSources2(
   const startDate = new Date(start).setMinutes(0, 0, 0);
   const endDate = new Date(end).setMinutes(0, 0, 0);
 
-  console.log("startDate", startDate);
-  console.log("endDate", endDate);
-
   const riskIndex = [],
     hourlyDatasets: HourlyDatasets = {
       poly: [],

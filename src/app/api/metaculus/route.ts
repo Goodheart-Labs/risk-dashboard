@@ -37,9 +37,21 @@ export async function GET(request: Request) {
     }
 
     const questionData = await questionResponse.json();
-    return Response.json(questionData);
+    return Response.json(questionData, {
+      headers: {
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+      },
+    });
   } catch (error) {
     console.error("Error fetching Metaculus data:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json(
+      { error: "Internal server error" },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+        },
+      },
+    );
   }
 }
