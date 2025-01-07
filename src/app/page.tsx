@@ -366,67 +366,6 @@ export default function Home() {
             />
           </div>
         </div>
-
-        <div className="mt-8 rounded-lg bg-white p-6 text-left shadow-lg">
-          <h3 className="mb-6 text-2xl font-semibold text-black">
-            Frequently Asked Questions
-          </h3>
-
-          <div className="space-y-4">
-            <Collapsible.Root className="rounded border border-gray-200">
-              <Collapsible.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
-                <h4 className="text-lg font-medium text-black">
-                  How is the risk index calculated?
-                </h4>
-                <ChevronDownIcon className="h-5 w-5 text-gray-500 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
-              </Collapsible.Trigger>
-              <Collapsible.Content className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
-                <div className="space-y-4 border-t border-gray-200 p-4 text-gray-600">
-                  <p>
-                    We have three individual data sources that relate to whether
-                    bird flu will be bad, but even if they all resolve positive,
-                    we might only have something like winter flu.
-                  </p>
-                  <p>
-                    As a result I, Nathan Young, have used my professional
-                    judgement as a forecaster, to assign a conditional
-                    probability to each datasource that if it resolves positive,
-                    the actual central question does.
-                  </p>
-                  <p className="font-mono text-sm">
-                    ie P(bird flu as bad as covid) = P(bird flu as bad as covid
-                    | 10,000 US cases) x P(10,000 US cases)
-                  </p>
-                  <p>
-                    If this page gets lots of traffic, I will crowdsource P(bird
-                    flu as bad as covid | 10,000 US cases), but as it is, I made
-                    a guess.
-                  </p>
-                  <p>
-                    Next we have three of these, and I have taken the average.
-                  </p>
-                  <p>So the full forecast is as follows:</p>
-                  <p className="font-mono text-sm">
-                    Index = (Nathan&apos;s estimate of P(bird flu as bad as
-                    covid | 10,000 US cases) x Current metaculus P(10,000 US
-                    cases) ) + Nathan&apos;s estimate of P(bird flu as bad as
-                    covid | 10,000 US cases) x Current kalshi P(10,000 US cases)
-                    + Nathan&apos;s estimate of P(bird flu as bad as covid | CDC
-                    travel advisory) x Current kalshi P(CDC travel advisory) / 3
-                  </p>
-                  <p>The weights are .5, .5 and .1 respectively.</p>
-                  <p>
-                    I may be wrong here, but I really do not think a straight or
-                    weighted average is the right answer. I agree that I should
-                    take some group median on these made up values, but
-                    it&apos;s unclear if that&apos;s worth the time at this
-                    stage.
-                  </p>
-                </div>
-              </Collapsible.Content>
-            </Collapsible.Root>
-          </div>
-        </div>
       </main>
 
       {/* Footer */}
@@ -487,6 +426,65 @@ export default function Home() {
               Something went wrong. Please try again.
             </p>
           )}
+        </div>
+        <div className="mb-8 mt-8 rounded-lg bg-white p-6 text-left shadow-lg">
+          <h3 className="mb-6 text-2xl font-semibold text-black">
+            Frequently Asked Questions
+          </h3>
+
+          <div className="space-y-4">
+            <Collapsible.Root className="rounded border border-gray-200">
+              <Collapsible.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
+                <h4 className="text-lg font-medium text-black">
+                  How is the risk index calculated?
+                </h4>
+                <ChevronDownIcon className="h-5 w-5 text-gray-500 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+              </Collapsible.Trigger>
+              <Collapsible.Content className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
+                <div className="space-y-4 border-t border-gray-200 p-4 text-gray-600">
+                  <p>
+                    We have three individual data sources that relate to whether
+                    bird flu will be bad, but even if they all resolve positive,
+                    we might only have something like winter flu.
+                  </p>
+                  <p>
+                    As a result I, Nathan Young, have used my professional
+                    judgement as a forecaster, to assign a conditional
+                    probability to each datasource that if it resolves positive,
+                    the actual central question does.
+                  </p>
+                  <p className="font-mono text-sm">
+                    ie P(bird flu as bad as covid) = P(bird flu as bad as covid
+                    | 10,000 US cases) x P(10,000 US cases)
+                  </p>
+                  <p>
+                    If this page gets lots of traffic, I will crowdsource P(bird
+                    flu as bad as covid | 10,000 US cases), but as it is, I made
+                    a guess.
+                  </p>
+                  <p>
+                    Next we have three of these, and I have taken the average.
+                  </p>
+                  <p>So the full forecast is as follows:</p>
+                  <p className="whitespace-pre-wrap font-mono text-sm">
+                    Index = ( Nathan&apos;s estimate of P(bird flu as bad as
+                    covid | 10,000 US cases) × Current Metaculus P(10,000 US
+                    cases) + Nathan&apos;s estimate of P(bird flu as bad as
+                    covid | 10,000 US cases) × Current Kalshi P(10,000 US cases)
+                    + Nathan&apos;s estimate of P(bird flu as bad as covid | CDC
+                    travel advisory) × Current Kalshi P(CDC travel advisory) ) ÷
+                    3
+                  </p>
+                  <p>The weights are .5, .5 and .1 respectively.</p>
+                  <p>
+                    I may be wrong here, but I really do not think a straight or
+                    weighted average is the right answer. I agree that I should
+                    take some group median on these made up values.
+                  </p>
+                </div>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </div>
         </div>
         <div className="mb-8 text-gray-600">
           <p className="mb-2">
