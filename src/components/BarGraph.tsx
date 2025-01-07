@@ -8,7 +8,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ChartDataPoint } from "../lib/risk-index/types";
-import { format } from "date-fns";
 import {
   Formatter,
   Payload,
@@ -19,9 +18,9 @@ interface BarGraphProps {
   color: string;
   label: string;
   formatValue?: (value: number) => string;
-  tickFormatter?: (date: string) => string;
+  tickFormatter: (date: string) => string;
   tooltipFormatter?: Formatter<number, string>;
-  tooltipLabelFormatter?: (
+  tooltipLabelFormatter: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     label: any,
     payload: Payload<number, string>[],
@@ -33,9 +32,9 @@ export function BarGraph({
   color,
   label,
   formatValue = (v: number) => v.toString(),
-  tickFormatter = (date) => format(new Date(date), "MM/dd"),
+  tickFormatter,
   tooltipFormatter = (value: number) => [formatValue(value), label],
-  tooltipLabelFormatter = (date: string) => format(new Date(date), "MM/dd"),
+  tooltipLabelFormatter,
 }: BarGraphProps) {
   return (
     <div className="relative h-[320px] w-full">

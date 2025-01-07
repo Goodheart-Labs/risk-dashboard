@@ -8,7 +8,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ChartDataPoint } from "../lib/risk-index/types";
-import { format } from "date-fns";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -64,9 +63,9 @@ export interface LineGraphProps {
   color: string;
   label: string;
   formatValue?: (value: number) => string;
-  tickFormatter?: (date: string) => string;
+  tickFormatter: (date: string) => string;
   tooltipFormatter?: (value: number) => [string, string];
-  tooltipLabelFormatter?: (date: string) => string;
+  tooltipLabelFormatter: (date: string) => string;
   domain?: [number, number];
 }
 
@@ -75,23 +74,9 @@ export function LineGraph({
   color,
   label,
   formatValue = (v: number) => v.toString(),
-  tickFormatter = (date) => {
-    try {
-      return format(new Date(date), "MMM d");
-    } catch (error) {
-      console.error("Invalid date value:", date, error);
-      return "Invalid Date";
-    }
-  },
+  tickFormatter,
   tooltipFormatter = (value: number) => [formatValue(value), label],
-  tooltipLabelFormatter = (date: string) => {
-    try {
-      return format(new Date(date), "MMM d");
-    } catch (error) {
-      console.error("Invalid tooltip date value:", date, error);
-      return "Invalid Date";
-    }
-  },
+  tooltipLabelFormatter,
   domain,
 }: LineGraphProps) {
   return (

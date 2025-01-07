@@ -181,7 +181,7 @@ export default function Home() {
           Will bird flu be the next COVID?{" "}
           <InfoTooltip content="Will bird flu have an impact on people's lives on the same order of magnitude as covid? Will it cause a random person huge personal inconvenience?" />
         </h1>
-        <p className="mb-4 text-2xl text-gray-700">
+        <p className="mb-4 min-h-[108px] text-2xl text-gray-700">
           {isLoading ? (
             "Loading risk assessment..."
           ) : error ? (
@@ -252,10 +252,8 @@ export default function Home() {
             label="Risk index value"
             formatValue={(v) => `${v.toFixed(1)}%`}
             domain={[0, 100]}
-            tickFormatter={(date) => format(new Date(date), "MMM d ha")}
-            tooltipLabelFormatter={(date) =>
-              format(new Date(date), "MMM d - ha 'UTC'")
-            }
+            tickFormatter={dateSix}
+            tooltipLabelFormatter={dateOne}
             tooltipFormatter={(value) => {
               const point = riskIndex.find((p) => p.value === value);
               if (!point?.date)
@@ -307,6 +305,8 @@ export default function Home() {
               label="Polymarket Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
               domain={[0, 100]}
+              tickFormatter={dateFour}
+              tooltipLabelFormatter={dateFour}
             />
           </div>
 
@@ -322,6 +322,8 @@ export default function Home() {
               label="Metaculus Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
               domain={[0, 100]}
+              tickFormatter={dateFour}
+              tooltipLabelFormatter={dateFour}
             />
           </div>
 
@@ -336,9 +338,8 @@ export default function Home() {
               color="#8b5cf6"
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
-              tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MMM d - HH:mm 'UTC'")
-              }
+              tickFormatter={dateFour}
+              tooltipLabelFormatter={dateTwo}
               domain={[0, 100]}
             />
           </div>
@@ -354,9 +355,8 @@ export default function Home() {
               color="#8b5cf6"
               label="Kalshi Prediction (%)"
               formatValue={(v) => `${v.toFixed(1)}%`}
-              tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MMM d - HH:mm 'UTC'")
-              }
+              tickFormatter={dateFour}
+              tooltipLabelFormatter={dateTwo}
               domain={[0, 100]}
             />
           </div>
@@ -376,10 +376,8 @@ export default function Home() {
               color="#f97316"
               label="Cases"
               formatValue={(v) => v.toString()}
-              tickFormatter={(date) => format(new Date(date), "MMM ''yy")}
-              tooltipLabelFormatter={(date) =>
-                format(new Date(date), "MMMM yyyy")
-              }
+              tickFormatter={dateFive}
+              tooltipLabelFormatter={dateThree}
             />
           </div>
         </div>
@@ -531,4 +529,25 @@ export default function Home() {
       </footer>
     </div>
   );
+}
+
+const dateOne = createSafeDateFormatter("MMM d - ha 'UTC'");
+const dateTwo = createSafeDateFormatter("MMM d - HH:mm 'UTC'");
+const dateThree = createSafeDateFormatter("MMMM yyyy");
+const dateFour = createSafeDateFormatter("MMM d");
+const dateFive = createSafeDateFormatter("MMM ''yy");
+const dateSix = createSafeDateFormatter("MMM d ha");
+
+/**
+ * This creates a safe date formatter that fails silently,
+ * and returns an empty string if the date is invalid.
+ */
+function createSafeDateFormatter(dateFormat: string) {
+  return (date: string) => {
+    try {
+      return format(new Date(date), dateFormat);
+    } catch {
+      return "";
+    }
+  };
 }
