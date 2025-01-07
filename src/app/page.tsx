@@ -443,20 +443,18 @@ export default function Home() {
             If you want to vote for other things to be included in the index or
             to see other data sources on this site,{" "}
             <a
-              href="#"
+              href="https://viewpoints.xyz/polls/h5n1-dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-blue-500 underline hover:text-blue-600"
-              onClick={(e) => {
-                e.preventDefault();
-                alert("Poll coming soon!");
-              }}
             >
               please vote using this 2 minute poll
             </a>
           </p>
         </div>
-        <div className="mb-4 flex items-center justify-center gap-2">
-          <span className="flex items-center gap-2">
-            Built by
+        <div className="mb-4 text-center">
+          Built by&nbsp;
+          <span className="inline-flex items-center gap-2">
             <a
               href="https://x.com/NathanpmYoung"
               target="_blank"
@@ -473,8 +471,8 @@ export default function Home() {
               />
             </a>
           </span>
-          <span>and</span>
-          <span className="flex items-center gap-2">
+          <span>&nbsp;and&nbsp;</span>
+          <span className="inline-flex items-center gap-2">
             <a
               href="https://x.com/tone_row_"
               target="_blank"
