@@ -18,9 +18,10 @@ import {
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
 import { BarGraph } from "@/components/BarGraph";
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, ChevronDownIcon } from "lucide-react";
 import { InfoTooltip } from "../components/InfoTooltip";
 import Image from "next/image";
+import * as Collapsible from "@radix-ui/react-collapsible";
 
 function GraphTitle({
   title,
@@ -152,25 +153,18 @@ export default function Home() {
     if (isLoading)
       return { riskIndex: [], hourlyDatasets: {} as HourlyDatasets };
 
-    if (polymarketTimeSeries.length === 0 && metaculusTimeSeries.length === 0) {
+    if (metaculusTimeSeries.length === 0) {
       setError("No data available from prediction markets");
       return { riskIndex: [], hourlyDatasets: {} as HourlyDatasets };
     }
 
     setError(null);
     return combineDataSources(
-      polymarketTimeSeries,
       metaculusTimeSeries,
       kalshiDelayTravel,
       kalshiCases,
     );
-  }, [
-    isLoading,
-    polymarketTimeSeries,
-    metaculusTimeSeries,
-    kalshiDelayTravel,
-    kalshiCases,
-  ]);
+  }, [isLoading, metaculusTimeSeries, kalshiDelayTravel, kalshiCases]);
 
   if (!mounted) return null;
 
@@ -221,11 +215,6 @@ export default function Home() {
                 </p>
                 <ul className="list-none space-y-1.5">
                   <li>
-                    <span className="font-medium">Polymarket</span>: Will a US
-                    state declare emergency?{" "}
-                    <span className="opacity-75">× {WEIGHTS.polymarket}</span>
-                  </li>
-                  <li>
                     <span className="font-medium">Metaculus</span>: Will CDC
                     report 10,000+ cases by 2026?{" "}
                     <span className="opacity-75">× {WEIGHTS.metaculus}</span>
@@ -259,9 +248,6 @@ export default function Home() {
               if (!point?.date)
                 return [value.toFixed(1) + "%", "Risk index value"];
 
-              const poly = hourlyDatasets.poly?.find(
-                (p) => p.date === point.date,
-              );
               const meta = hourlyDatasets.meta?.find(
                 (p) => p.date === point.date,
               );
@@ -276,7 +262,6 @@ export default function Home() {
                 [
                   `Risk index value: <b>${value.toFixed(1)}%</b>`,
                   `Formed from an average of:`,
-                  `• US state emergency before Feb: <b>${poly ? poly.value.toFixed(1) : "-"}%</b> (Polymarket × ${WEIGHTS.polymarket})`,
                   `• 10,000 US cases before 2026: <b>${meta ? meta.value.toFixed(1) : "-"}%</b> (Metaculus × ${WEIGHTS.metaculus})`,
                   `• 10,000 US cases this year: <b>${kalshiC ? kalshiC.value.toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiCases})`,
                   `• CDC travel warning before 2026: <b>${kalshiT ? kalshiT.value.toFixed(1) : "-"}%</b> (Kalshi × ${WEIGHTS.kalshiDelayTravel})`,
@@ -295,23 +280,6 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="rounded-lg bg-white p-6 shadow-lg">
             <GraphTitle
-              title="Another US State other than California declare a state of emergency over bird flu before February?"
-              sourceUrl="https://polymarket.com/event/another-state-declare-a-state-of-emergency-over-bird-flu-before-february"
-              tooltipContent="A state of emergence gives the Governor additional powers. It doesn't necessarily imply lockdowns or similar."
-            />
-            <LineGraph
-              data={polymarketTimeSeries}
-              color="#3b82f6"
-              label="Polymarket Prediction (%)"
-              formatValue={(v) => `${v.toFixed(1)}%`}
-              domain={[0, 100]}
-              tickFormatter={dateFour}
-              tooltipLabelFormatter={dateFour}
-            />
-          </div>
-
-          <div className="rounded-lg bg-white p-6 shadow-lg">
-            <GraphTitle
               title="Will CDC report 10,000 or more H5 avian influenza cases in the United States before January 1, 2026?"
               sourceUrl="https://www.metaculus.com/questions/30960/?sub-question=30732"
               tooltipContent=""
@@ -324,23 +292,6 @@ export default function Home() {
               domain={[0, 100]}
               tickFormatter={dateFour}
               tooltipLabelFormatter={dateFour}
-            />
-          </div>
-
-          <div className="rounded-lg bg-white p-6 shadow-lg">
-            <GraphTitle
-              title="Will the CDC recommend delaying non-essential travel due to H5 bird flu before 2026?"
-              sourceUrl="https://kalshi.com/markets/kxcdctravelh5/avian-flu-travel-warning"
-              tooltipContent=""
-            />
-            <LineGraph
-              data={kalshiDelayTravel}
-              color="#8b5cf6"
-              label="Kalshi Prediction (%)"
-              formatValue={(v) => `${v.toFixed(1)}%`}
-              tickFormatter={dateFour}
-              tooltipLabelFormatter={dateTwo}
-              domain={[0, 100]}
             />
           </div>
 
@@ -361,11 +312,45 @@ export default function Home() {
             />
           </div>
 
-          <h3 className="text-xl font-semibold text-gray-700">
-            Not included in index:
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <GraphTitle
+              title="Will the CDC recommend delaying non-essential travel due to H5 bird flu before 2026?"
+              sourceUrl="https://kalshi.com/markets/kxcdctravelh5/avian-flu-travel-warning"
+              tooltipContent=""
+            />
+            <LineGraph
+              data={kalshiDelayTravel}
+              color="#8b5cf6"
+              label="Kalshi Prediction (%)"
+              formatValue={(v) => `${v.toFixed(1)}%`}
+              tickFormatter={dateFour}
+              tooltipLabelFormatter={dateTwo}
+              domain={[0, 100]}
+            />
+          </div>
+
+          <h3 className="col-span-full text-xl font-semibold text-gray-700">
+            Other useful indicators:
           </h3>
 
-          <div className="col-span-full rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded-lg bg-white p-6 shadow-lg">
+            <GraphTitle
+              title="Another US State other than California declare a state of emergency over bird flu before February?"
+              sourceUrl="https://polymarket.com/event/another-state-declare-a-state-of-emergency-over-bird-flu-before-february"
+              tooltipContent="A state of emergence gives the Governor additional powers. It doesn't necessarily imply lockdowns or similar."
+            />
+            <LineGraph
+              data={polymarketTimeSeries}
+              color="#3b82f6"
+              label="Polymarket Prediction (%)"
+              formatValue={(v) => `${v.toFixed(1)}%`}
+              domain={[0, 100]}
+              tickFormatter={dateFour}
+              tooltipLabelFormatter={dateFour}
+            />
+          </div>
+
+          <div className="rounded-lg bg-white p-6 shadow-lg">
             <GraphTitle
               title="Monthly H5N1 Cases Worldwide"
               sourceUrl="https://www.cdc.gov/bird-flu/php/avian-flu-summary/chart-epi-curve-ah5n1.html"
@@ -379,6 +364,67 @@ export default function Home() {
               tickFormatter={dateFive}
               tooltipLabelFormatter={dateThree}
             />
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-lg bg-white p-6 text-left shadow-lg">
+          <h3 className="mb-6 text-2xl font-semibold text-black">
+            Frequently Asked Questions
+          </h3>
+
+          <div className="space-y-4">
+            <Collapsible.Root className="rounded border border-gray-200">
+              <Collapsible.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
+                <h4 className="text-lg font-medium text-black">
+                  How is the risk index calculated?
+                </h4>
+                <ChevronDownIcon className="h-5 w-5 text-gray-500 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+              </Collapsible.Trigger>
+              <Collapsible.Content className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
+                <div className="space-y-4 border-t border-gray-200 p-4 text-gray-600">
+                  <p>
+                    We have three individual data sources that relate to whether
+                    bird flu will be bad, but even if they all resolve positive,
+                    we might only have something like winter flu.
+                  </p>
+                  <p>
+                    As a result I, Nathan Young, have used my professional
+                    judgement as a forecaster, to assign a conditional
+                    probability to each datasource that if it resolves positive,
+                    the actual central question does.
+                  </p>
+                  <p className="font-mono text-sm">
+                    ie P(bird flu as bad as covid) = P(bird flu as bad as covid
+                    | 10,000 US cases) x P(10,000 US cases)
+                  </p>
+                  <p>
+                    If this page gets lots of traffic, I will crowdsource P(bird
+                    flu as bad as covid | 10,000 US cases), but as it is, I made
+                    a guess.
+                  </p>
+                  <p>
+                    Next we have three of these, and I have taken the average.
+                  </p>
+                  <p>So the full forecast is as follows:</p>
+                  <p className="font-mono text-sm">
+                    Index = (Nathan&apos;s estimate of P(bird flu as bad as
+                    covid | 10,000 US cases) x Current metaculus P(10,000 US
+                    cases) ) + Nathan&apos;s estimate of P(bird flu as bad as
+                    covid | 10,000 US cases) x Current kalshi P(10,000 US cases)
+                    + Nathan&apos;s estimate of P(bird flu as bad as covid | CDC
+                    travel advisory) x Current kalshi P(CDC travel advisory) / 3
+                  </p>
+                  <p>The weights are .5, .5 and .1 respectively.</p>
+                  <p>
+                    I may be wrong here, but I really do not think a straight or
+                    weighted average is the right answer. I agree that I should
+                    take some group median on these made up values, but
+                    it&apos;s unclear if that&apos;s worth the time at this
+                    stage.
+                  </p>
+                </div>
+              </Collapsible.Content>
+            </Collapsible.Root>
           </div>
         </div>
       </main>
