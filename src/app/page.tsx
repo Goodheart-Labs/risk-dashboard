@@ -18,7 +18,12 @@ import {
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
 import { BarGraph } from "@/components/BarGraph";
-import { LinkIcon, ChevronDownIcon } from "lucide-react";
+import {
+  LinkIcon,
+  ChevronDownIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+} from "lucide-react";
 import { InfoTooltip } from "../components/InfoTooltip";
 import Image from "next/image";
 import * as Collapsible from "@radix-ui/react-collapsible";
@@ -27,10 +32,12 @@ function GraphTitle({
   title,
   sourceUrl,
   tooltipContent,
+  children,
 }: {
   title: string;
   sourceUrl?: string;
   tooltipContent?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   const TitleComponent = sourceUrl ? (
     <a
@@ -46,10 +53,13 @@ function GraphTitle({
       <LinkIcon className="mt-2 h-3 w-3 shrink-0 opacity-30 group-hover:opacity-60" />
     </a>
   ) : (
-    <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900">
-      {title}
-      {tooltipContent && <InfoTooltip content={tooltipContent} />}
-    </h2>
+    <div className="flex items-center gap-4">
+      <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900">
+        {title}
+        {tooltipContent && <InfoTooltip content={tooltipContent} />}
+      </h2>
+      {children}
+    </div>
   );
 
   return (
@@ -149,13 +159,21 @@ export default function Home() {
   ]);
 
   // Calculate combined risk index and interpolated datasets when data updates
-  const { riskIndex, hourlyDatasets } = useMemo(() => {
+  const { riskIndex, hourlyDatasets, percentageMovement } = useMemo(() => {
     if (isLoading)
-      return { riskIndex: [], hourlyDatasets: {} as HourlyDatasets };
+      return {
+        riskIndex: [],
+        hourlyDatasets: {} as HourlyDatasets,
+        percentageMovement: 0,
+      };
 
     if (metaculusTimeSeries.length === 0) {
       setError("No data available from prediction markets");
-      return { riskIndex: [], hourlyDatasets: {} as HourlyDatasets };
+      return {
+        riskIndex: [],
+        hourlyDatasets: {} as HourlyDatasets,
+        percentageMovement: 0,
+      };
     }
 
     setError(null);
@@ -234,7 +252,18 @@ export default function Home() {
                 </ul>
               </div>
             }
-          />
+          >
+            <div
+              className={`flex items-center gap-1 text-sm ${percentageMovement >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {percentageMovement >= 0 ? (
+                <ArrowUpIcon className="h-4 w-4" />
+              ) : (
+                <ArrowDownIcon className="h-4 w-4" />
+              )}
+              <span>{Math.abs(percentageMovement).toFixed(1)}% 24h</span>
+            </div>
+          </GraphTitle>
           <LineGraph
             data={riskIndex}
             color="#ef4444"

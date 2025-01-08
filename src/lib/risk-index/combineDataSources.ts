@@ -71,5 +71,13 @@ export function combineDataSources(
     riskIndex.push({ date, value: indexValue });
   }
 
-  return { riskIndex, hourlyDatasets };
+  // Now let's determine the percentage movement in the past 24 hours
+  const last24Hours = riskIndex.slice(-24);
+  const last24HoursValues = last24Hours.map((point) => point.value);
+  const percentageMovement =
+    ((last24HoursValues[last24HoursValues.length - 1] - last24HoursValues[0]) /
+      last24HoursValues[0]) *
+    100;
+
+  return { riskIndex, hourlyDatasets, percentageMovement };
 }
