@@ -71,13 +71,11 @@ export function combineDataSources(
     riskIndex.push({ date, value: indexValue });
   }
 
-  // Now let's determine the percentage movement in the past 24 hours
+  // Calculate absolute point movement in the past 24 hours
   const last24Hours = riskIndex.slice(-24);
-  const last24HoursValues = last24Hours.map((point) => point.value);
-  const percentageMovement =
-    ((last24HoursValues[last24HoursValues.length - 1] - last24HoursValues[0]) /
-      last24HoursValues[0]) *
-    100;
+  const pointMovement = (
+    last24Hours[last24Hours.length - 1].value - last24Hours[0].value
+  ).toFixed(2);
 
-  return { riskIndex, hourlyDatasets, percentageMovement };
+  return { riskIndex, hourlyDatasets, pointMovement };
 }

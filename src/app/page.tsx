@@ -168,12 +168,12 @@ export default function Home() {
   ]);
 
   // Calculate combined risk index and interpolated datasets when data updates
-  const { riskIndex, hourlyDatasets, percentageMovement } = useMemo(() => {
+  const { riskIndex, hourlyDatasets, pointMovement } = useMemo(() => {
     if (isLoading)
       return {
         riskIndex: [],
         hourlyDatasets: {} as HourlyDatasets,
-        percentageMovement: 0,
+        pointMovement: 0,
       };
 
     if (metaculusTimeSeries.length === 0) {
@@ -181,7 +181,7 @@ export default function Home() {
       return {
         riskIndex: [],
         hourlyDatasets: {} as HourlyDatasets,
-        percentageMovement: 0,
+        pointMovement: 0,
       };
     }
 
@@ -263,14 +263,19 @@ export default function Home() {
             }
           >
             <div
-              className={`flex items-center gap-1 text-sm ${percentageMovement >= 0 ? "text-green-600" : "text-red-600"}`}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-base",
+                Number(pointMovement) >= 0
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                  : "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300",
+              )}
             >
-              {percentageMovement >= 0 ? (
+              {Number(pointMovement) >= 0 ? (
                 <ArrowUpIcon className="h-4 w-4" />
               ) : (
                 <ArrowDownIcon className="h-4 w-4" />
               )}
-              <span>{Math.abs(percentageMovement).toFixed(1)}% 24h</span>
+              <span>{Math.abs(Number(pointMovement))} 24h</span>
             </div>
           </GraphTitle>
           <LineGraph
