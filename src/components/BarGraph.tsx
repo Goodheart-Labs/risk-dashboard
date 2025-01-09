@@ -38,7 +38,9 @@ export function BarGraph({
 }: BarGraphProps) {
   return (
     <div className="relative h-[320px] w-full">
-      <div className="absolute left-0 top-0 text-sm text-gray-500">{label}</div>
+      <div className="absolute left-0 top-0 text-sm text-gray-500 dark:text-gray-400">
+        {label}
+      </div>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
@@ -49,7 +51,11 @@ export function BarGraph({
             bottom: 24,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="currentColor"
+            opacity={0.1}
+          />
           <XAxis
             dataKey="date"
             tick={{
@@ -58,19 +64,46 @@ export function BarGraph({
               angle: -45,
               textAnchor: "end",
               dy: 5,
+              fill: "currentColor",
+              opacity: 0.65,
             }}
             tickFormatter={tickFormatter}
+            stroke="currentColor"
+            opacity={0.2}
           />
           <YAxis
             width={45}
-            tick={{ fontSize: 12 }}
+            tick={{
+              fontSize: 12,
+              fill: "currentColor",
+              opacity: 0.65,
+            }}
             tickFormatter={formatValue}
+            stroke="currentColor"
+            opacity={0.2}
           />
           <Tooltip
             formatter={tooltipFormatter}
             labelFormatter={tooltipLabelFormatter}
+            contentStyle={{
+              backgroundColor: "var(--background)",
+              border: "1px solid var(--border)",
+              borderRadius: "0.5rem",
+              color: "var(--foreground)",
+            }}
           />
-          <Bar dataKey="value" fill={color} isAnimationActive={false} />
+          <Bar
+            dataKey="value"
+            fill={color}
+            isAnimationActive={false}
+            activeBar={{
+              fill: color,
+              fillOpacity: 1,
+              stroke: "currentColor",
+              strokeOpacity: 0.1,
+              strokeWidth: 1,
+            }}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -30,8 +30,8 @@ function CustomTooltip({
   const lines = content.split("<br />");
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
-      <p className="mb-2 font-medium text-gray-900">
+    <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+      <p className="mb-2 font-medium text-gray-900 dark:text-gray-100">
         {labelFormatter(label || "")}
       </p>
       {lines.map((line, i) => {
@@ -41,7 +41,10 @@ function CustomTooltip({
           const [fullMatch, number] = match;
           const [before, after] = line.split(fullMatch);
           return (
-            <p key={i} className="whitespace-nowrap text-gray-700">
+            <p
+              key={i}
+              className="whitespace-nowrap text-gray-700 dark:text-gray-300"
+            >
               {before}
               <span className="font-bold">{number}</span>
               {after}
@@ -49,7 +52,10 @@ function CustomTooltip({
           );
         }
         return (
-          <p key={i} className="whitespace-nowrap text-gray-700">
+          <p
+            key={i}
+            className="whitespace-nowrap text-gray-700 dark:text-gray-300"
+          >
             {line}
           </p>
         );
@@ -81,7 +87,9 @@ export function LineGraph({
 }: LineGraphProps) {
   return (
     <div className="relative h-[320px] w-full">
-      <div className="absolute left-0 top-0 text-sm text-gray-500">{label}</div>
+      <div className="absolute left-0 top-0 text-sm text-gray-500 dark:text-gray-400">
+        {label}
+      </div>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
@@ -92,7 +100,11 @@ export function LineGraph({
             bottom: 40,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="currentColor"
+            opacity={0.1}
+          />
           <XAxis
             dataKey="date"
             tick={{
@@ -101,14 +113,24 @@ export function LineGraph({
               angle: -45,
               textAnchor: "end",
               dy: 5,
+              fill: "currentColor",
+              opacity: 0.65,
             }}
             tickFormatter={tickFormatter}
+            stroke="currentColor"
+            opacity={0.2}
           />
           <YAxis
             width={45}
-            tick={{ fontSize: 12 }}
+            tick={{
+              fontSize: 12,
+              fill: "currentColor",
+              opacity: 0.65,
+            }}
             tickFormatter={(value) => formatValue(value)}
             domain={domain}
+            stroke="currentColor"
+            opacity={0.2}
           />
           <Tooltip
             content={

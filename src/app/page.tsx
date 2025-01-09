@@ -18,43 +18,62 @@ import {
 import { getProbabilityWord, getProbabilityColor } from "@/lib/probabilities";
 import { format } from "date-fns";
 import { BarGraph } from "@/components/BarGraph";
-import { LinkIcon, ChevronDownIcon } from "lucide-react";
-import { InfoTooltip } from "../components/InfoTooltip";
+import {
+  LinkIcon,
+  ChevronDownIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+} from "lucide-react";
 import Image from "next/image";
 import * as Collapsible from "@radix-ui/react-collapsible";
+import { cn } from "@/lib/utils";
+import { MobileFriendlyTooltip } from "@/components/MobileFriendlyTooltip";
 
 function GraphTitle({
   title,
   sourceUrl,
   tooltipContent,
+  children,
 }: {
   title: string;
   sourceUrl?: string;
   tooltipContent?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
+  const sharedClasses =
+    "text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900 dark:text-gray-100";
   const TitleComponent = sourceUrl ? (
     <a
       href={sourceUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-start gap-2"
+      className="group"
     >
-      <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900 group-hover:text-blue-600">
+      <h2
+        className={cn(
+          sharedClasses,
+          "group-hover:text-blue-600 dark:group-hover:text-blue-400",
+        )}
+      >
         {title}
-        {tooltipContent && <InfoTooltip content={tooltipContent} />}
+        <LinkIcon className="ml-1 inline-block h-3 w-3 opacity-50 group-hover:opacity-60" />
       </h2>
-      <LinkIcon className="mt-2 h-3 w-3 shrink-0 opacity-30 group-hover:opacity-60" />
     </a>
   ) : (
-    <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900">
-      {title}
-      {tooltipContent && <InfoTooltip content={tooltipContent} />}
-    </h2>
+    <h2 className={sharedClasses}>{title}</h2>
   );
 
   return (
     <div className="mb-2 grid gap-1">
-      <div className="inline-flex items-center gap-1">{TitleComponent}</div>
+      <div className="inline-flex items-center justify-between gap-1">
+        <div className="flex w-full items-center justify-start gap-2">
+          {TitleComponent}
+          {children}
+        </div>
+        {tooltipContent && (
+          <MobileFriendlyTooltip>{tooltipContent}</MobileFriendlyTooltip>
+        )}
+      </div>
     </div>
   );
 }
@@ -149,13 +168,21 @@ export default function Home() {
   ]);
 
   // Calculate combined risk index and interpolated datasets when data updates
-  const { riskIndex, hourlyDatasets } = useMemo(() => {
+  const { riskIndex, hourlyDatasets, pointMovement } = useMemo(() => {
     if (isLoading)
-      return { riskIndex: [], hourlyDatasets: {} as HourlyDatasets };
+      return {
+        riskIndex: [],
+        hourlyDatasets: {} as HourlyDatasets,
+        pointMovement: 0,
+      };
 
     if (metaculusTimeSeries.length === 0) {
       setError("No data available from prediction markets");
-      return { riskIndex: [], hourlyDatasets: {} as HourlyDatasets };
+      return {
+        riskIndex: [],
+        hourlyDatasets: {} as HourlyDatasets,
+        pointMovement: 0,
+      };
     }
 
     setError(null);
@@ -169,13 +196,17 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-gray-100 p-6 font-[family-name:var(--font-geist-sans)] text-foreground dark:bg-gray-900">
       <header className="mx-auto mb-8 w-full max-w-6xl text-center">
-        <h1 className="my-4 text-2xl font-bold text-black md:text-5xl">
+        <h1 className="my-4 text-2xl font-bold md:text-5xl">
           Will bird flu be the next COVID?{" "}
-          <InfoTooltip content="Will bird flu have an impact on people's lives on the same order of magnitude as covid? Will it cause a random person huge personal inconvenience?" />
+          <MobileFriendlyTooltip>
+            Will bird flu have an impact on people&apos;s lives on the same
+            order of magnitude as covid? Will it cause a random person huge
+            personal inconvenience?
+          </MobileFriendlyTooltip>
         </h1>
-        <p className="mb-4 min-h-[108px] text-2xl text-gray-700">
+        <p className="mb-4 min-h-[108px] text-2xl text-gray-700 dark:text-gray-300">
           {isLoading ? (
             "Loading risk assessment..."
           ) : error ? (
@@ -183,7 +214,7 @@ export default function Home() {
           ) : (
             <>
               <span
-                className={`mb-4 block text-6xl font-bold ${getProbabilityColor(
+                className={`mb-4 block text-4xl font-bold sm:text-6xl ${getProbabilityColor(
                   riskIndex[riskIndex.length - 1].value / 100,
                 )}`}
               >
@@ -196,7 +227,12 @@ export default function Home() {
               (about {riskIndex[riskIndex.length - 1].value.toFixed(0)}%) as of{" "}
               <span className="inline-flex items-center">
                 {format(new Date(), "MMMM d, yyyy")}
-                <InfoTooltip content="The index is an average of predictions from Polymarket, Metaculus, and Kalshi. Polymarket and Kalshi are real money prediction markets. Metaculus is a forecasting community with a good track record." />
+                <MobileFriendlyTooltip>
+                  The index is an average of predictions from Polymarket,
+                  Metaculus, and Kalshi. Polymarket and Kalshi are real money
+                  prediction markets. Metaculus is a forecasting community with
+                  a good track record.
+                </MobileFriendlyTooltip>
               </span>
             </>
           )}
@@ -204,7 +240,7 @@ export default function Home() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl space-y-6">
-        <div className="rounded-lg bg-white p-6 shadow-lg">
+        <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
           <GraphTitle
             title="H5N1 Risk Index"
             tooltipContent={
@@ -234,7 +270,23 @@ export default function Home() {
                 </ul>
               </div>
             }
-          />
+          >
+            <div
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-base",
+                Number(pointMovement) >= 0
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                  : "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300",
+              )}
+            >
+              {Number(pointMovement) >= 0 ? (
+                <ArrowUpIcon className="h-4 w-4" />
+              ) : (
+                <ArrowDownIcon className="h-4 w-4" />
+              )}
+              <span>{Math.abs(Number(pointMovement))} 24h</span>
+            </div>
+          </GraphTitle>
           <LineGraph
             data={riskIndex}
             color="#ef4444"
@@ -272,13 +324,12 @@ export default function Home() {
           />
         </div>
 
-        <h3 className="text-xl font-semibold text-gray-700">
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
           Included in index:
         </h3>
 
-        {/* Grid of smaller graphs */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <GraphTitle
               title="Will CDC report 10,000 or more H5 avian influenza cases in the United States before January 1, 2026?"
               sourceUrl="https://www.metaculus.com/questions/30960/?sub-question=30732"
@@ -295,7 +346,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <GraphTitle
               title="Above 10,000 Bird Flu (H5N1) cases this year?"
               sourceUrl="https://kalshi.com/markets/kxh5n1cases/h5n1-cases"
@@ -312,7 +363,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <GraphTitle
               title="Will the CDC recommend delaying non-essential travel due to H5 bird flu before 2026?"
               sourceUrl="https://kalshi.com/markets/kxcdctravelh5/avian-flu-travel-warning"
@@ -328,12 +379,15 @@ export default function Home() {
               domain={[0, 100]}
             />
           </div>
+        </div>
 
-          <h3 className="col-span-full text-xl font-semibold text-gray-700">
-            Other useful indicators:
-          </h3>
+        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+          Other useful indicators:
+        </h3>
 
-          <div className="rounded-lg bg-white p-6 shadow-lg">
+        {/* Grid of smaller graphs */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <GraphTitle
               title="Another US State other than California declare a state of emergency over bird flu before February?"
               sourceUrl="https://polymarket.com/event/another-state-declare-a-state-of-emergency-over-bird-flu-before-february"
@@ -350,7 +404,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="rounded-lg bg-white p-6 shadow-lg">
+          <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <GraphTitle
               title="Monthly H5N1 Cases Worldwide"
               sourceUrl="https://www.cdc.gov/bird-flu/php/avian-flu-summary/chart-epi-curve-ah5n1.html"
@@ -369,12 +423,10 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mx-auto mt-8 w-full max-w-6xl text-center text-sm text-gray-500">
-        <div className="mb-8 rounded-lg bg-white p-6 shadow-lg">
-          <h3 className="mb-2 text-lg font-semibold text-black">
-            Stay Updated
-          </h3>
-          <p className="mb-4 text-gray-600">
+      <footer className="mx-auto mt-8 w-full max-w-6xl text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="mb-8 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+          <h3 className="mb-2 text-lg font-semibold">Stay Updated</h3>
+          <p className="mb-4 text-gray-600 dark:text-gray-300">
             Get updated on if H5N1 risk levels change significantly or if we
             build another dashboard for some comparable risk. Your email will
             not be used for other purposes.
@@ -405,7 +457,7 @@ export default function Home() {
               type="email"
               name="email"
               placeholder="Enter your email"
-              className="flex-1 rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               required
             />
             <button
@@ -427,21 +479,21 @@ export default function Home() {
             </p>
           )}
         </div>
-        <div className="mb-8 mt-8 rounded-lg bg-white p-6 text-left shadow-lg">
-          <h3 className="mb-6 text-2xl font-semibold text-black">
+        <div className="mb-8 mt-8 rounded-lg bg-white p-6 text-left shadow-lg dark:bg-gray-800">
+          <h3 className="mb-6 text-2xl font-semibold">
             Frequently Asked Questions
           </h3>
 
           <div className="space-y-4">
-            <Collapsible.Root className="rounded border border-gray-200">
-              <Collapsible.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50">
-                <h4 className="text-lg font-medium text-black">
+            <Collapsible.Root className="rounded border border-gray-200 dark:border-gray-700">
+              <Collapsible.Trigger className="flex w-full items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:text-gray-100">
+                <h4 className="text-lg font-medium">
                   How is the risk index calculated?
                 </h4>
                 <ChevronDownIcon className="h-5 w-5 text-gray-500 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
               </Collapsible.Trigger>
               <Collapsible.Content className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
-                <div className="space-y-4 border-t border-gray-200 p-4 text-gray-600">
+                <div className="space-y-4 border-t border-gray-200 p-4 text-gray-600 dark:border-gray-700 dark:text-gray-300">
                   <p>
                     We have three individual data sources that relate to whether
                     bird flu will be bad, but even if they all resolve positive,
@@ -486,7 +538,7 @@ export default function Home() {
             </Collapsible.Root>
           </div>
         </div>
-        <div className="mb-8 text-gray-600">
+        <div className="mb-8 text-gray-600 dark:text-gray-300">
           <p className="mb-2">
             If you want to vote for other things to be included in the index or
             to see other data sources on this site,{" "}
@@ -557,7 +609,7 @@ export default function Home() {
             View the source code on GitHub
           </a>
         </div>
-        <p className="mb-4 text-gray-600">
+        <p className="mb-4 text-gray-600 dark:text-gray-300">
           If you want to support more work like this,{" "}
           <a
             href="https://nathanpmyoung.substack.com"

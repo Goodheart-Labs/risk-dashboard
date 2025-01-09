@@ -71,5 +71,11 @@ export function combineDataSources(
     riskIndex.push({ date, value: indexValue });
   }
 
-  return { riskIndex, hourlyDatasets };
+  // Calculate absolute point movement in the past 24 hours
+  const last24Hours = riskIndex.slice(-24);
+  const pointMovement = (
+    last24Hours[last24Hours.length - 1].value - last24Hours[0].value
+  ).toFixed(2);
+
+  return { riskIndex, hourlyDatasets, pointMovement };
 }
