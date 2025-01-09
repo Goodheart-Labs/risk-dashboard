@@ -552,6 +552,48 @@ export default function Home() {
             </a>
           </p>
         </div>
+
+        <div className="mb-1 text-center">
+          <a
+            href="https://github.com/Goodheart-Labs/h5n1-dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-600"
+          >
+            View the source code on GitHub
+          </a>
+        </div>
+        <div className="mb-1 text-gray-600 dark:text-gray-300">
+          If you want to support more work like this,{" "}
+          <a
+            href="https://nathanpmyoung.substack.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-600"
+          >
+            buy a paid subscription to Predictive Text
+          </a>
+        </div>
+        <div className="mb-1 flex flex-col items-center gap-2">
+          <p className="text-gray-600 dark:text-gray-300">
+            If you want more people to see this dashboard today, a vote on
+            Product Hunt would help
+          </p>
+          <a
+            href="https://www.producthunt.com/posts/bird-flu-risk-dashboard?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-bird&#0045;flu&#0045;risk&#0045;dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=766429&theme=light"
+              alt="Bird Flu Risk Dashboard - Little chance of it being the next Covid | Product Hunt"
+              width={250}
+              height={54}
+              style={{ width: "250px", height: "54px" }}
+            />
+          </a>
+        </div>
+
         <div className="mb-1">
           Built by&nbsp;
           <span className="inline-flex items-center gap-2">
@@ -599,27 +641,8 @@ export default function Home() {
             </a>
           </span>
         </div>
-        <div className="mb-4 text-center">
-          <a
-            href="https://github.com/Goodheart-Labs/h5n1-dashboard"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600"
-          >
-            View the source code on GitHub
-          </a>
-        </div>
-        <p className="mb-4 text-gray-600 dark:text-gray-300">
-          If you want to support more work like this,{" "}
-          <a
-            href="https://nathanpmyoung.substack.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600"
-          >
-            buy a paid subscription to Predictive Text
-          </a>
-        </p>
+
+        <span>&nbsp;</span>
 
         <p>Last updated: {mounted ? new Date().toLocaleDateString() : ""}</p>
       </footer>
