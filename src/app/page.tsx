@@ -24,10 +24,10 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
 } from "lucide-react";
-import { InfoTooltip } from "../components/InfoTooltip";
 import Image from "next/image";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
+import { MobileFriendlyTooltip } from "@/components/MobileFriendlyTooltip";
 
 function GraphTitle({
   title,
@@ -47,7 +47,7 @@ function GraphTitle({
       href={sourceUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-start gap-2"
+      className="group"
     >
       <h2
         className={cn(
@@ -56,24 +56,24 @@ function GraphTitle({
         )}
       >
         {title}
-        {tooltipContent && <InfoTooltip content={tooltipContent} />}
+        <LinkIcon className="ml-1 inline-block h-3 w-3 opacity-50 group-hover:opacity-60" />
       </h2>
-      {children}
-      <LinkIcon className="mt-2 h-3 w-3 shrink-0 opacity-30 group-hover:opacity-60" />
     </a>
   ) : (
-    <div className="flex items-center gap-4">
-      <h2 className="text-pretty text-xl font-semibold leading-tight tracking-tight text-gray-900 dark:text-gray-100">
-        {title}
-        {tooltipContent && <InfoTooltip content={tooltipContent} />}
-      </h2>
-      {children}
-    </div>
+    <h2 className={sharedClasses}>{title}</h2>
   );
 
   return (
     <div className="mb-2 grid gap-1">
-      <div className="inline-flex items-center gap-1">{TitleComponent}</div>
+      <div className="inline-flex items-center justify-between gap-1">
+        <div className="flex w-full items-center justify-start gap-2">
+          {TitleComponent}
+          {children}
+        </div>
+        {tooltipContent && (
+          <MobileFriendlyTooltip>{tooltipContent}</MobileFriendlyTooltip>
+        )}
+      </div>
     </div>
   );
 }
@@ -200,7 +200,11 @@ export default function Home() {
       <header className="mx-auto mb-8 w-full max-w-6xl text-center">
         <h1 className="my-4 text-2xl font-bold md:text-5xl">
           Will bird flu be the next COVID?{" "}
-          <InfoTooltip content="Will bird flu have an impact on people's lives on the same order of magnitude as covid? Will it cause a random person huge personal inconvenience?" />
+          <MobileFriendlyTooltip>
+            Will bird flu have an impact on people&apos;s lives on the same
+            order of magnitude as covid? Will it cause a random person huge
+            personal inconvenience?
+          </MobileFriendlyTooltip>
         </h1>
         <p className="mb-4 min-h-[108px] text-2xl text-gray-700 dark:text-gray-300">
           {isLoading ? (
@@ -210,7 +214,7 @@ export default function Home() {
           ) : (
             <>
               <span
-                className={`mb-4 block text-6xl font-bold ${getProbabilityColor(
+                className={`mb-4 block text-4xl font-bold sm:text-6xl ${getProbabilityColor(
                   riskIndex[riskIndex.length - 1].value / 100,
                 )}`}
               >
@@ -223,7 +227,12 @@ export default function Home() {
               (about {riskIndex[riskIndex.length - 1].value.toFixed(0)}%) as of{" "}
               <span className="inline-flex items-center">
                 {format(new Date(), "MMMM d, yyyy")}
-                <InfoTooltip content="The index is an average of predictions from Polymarket, Metaculus, and Kalshi. Polymarket and Kalshi are real money prediction markets. Metaculus is a forecasting community with a good track record." />
+                <MobileFriendlyTooltip>
+                  The index is an average of predictions from Polymarket,
+                  Metaculus, and Kalshi. Polymarket and Kalshi are real money
+                  prediction markets. Metaculus is a forecasting community with
+                  a good track record.
+                </MobileFriendlyTooltip>
               </span>
             </>
           )}
